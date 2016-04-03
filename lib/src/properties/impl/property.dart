@@ -1,6 +1,6 @@
 part of proto_game.properties;
 
-class BaseProperty<T extends Object>{
+abstract class BaseProperty<T extends Object>{
 
   T value;
 
@@ -12,7 +12,17 @@ class BaseProperty<T extends Object>{
 
 }
 
-class ModifiedProperty extends BaseProperty{
+class StringProperty extends BaseProperty<String> {
+  StringProperty(String name, String description, String value) : super(name, description, value);
+}
+class NumProperty extends BaseProperty<num>{
+  NumProperty(String name, String description, num value) : super(name, description, value);
+}
+class BoolProperty extends BaseProperty<bool>{
+  BoolProperty(String name, String description, bool value) : super(name, description, value);
+}
+
+class ModifiedProperty extends BaseProperty {
 
   ModifiedProperty(BaseProperty base, List<HasModifier> modifierContainers)
     : super(base.name, base.description, base.value)

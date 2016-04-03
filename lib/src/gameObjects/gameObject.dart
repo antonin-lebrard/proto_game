@@ -39,6 +39,11 @@ class ConsumableGameObject extends BaseGameObject implements HasModifier {
   {
 
   }
+  ConsumableGameObject.noModifier(num id, String name, String description)
+      : super(id, name, description)
+  {
+    this.modifier = new NoModifier();
+  }
 
   BaseModifier getModifier() => modifier;
 
