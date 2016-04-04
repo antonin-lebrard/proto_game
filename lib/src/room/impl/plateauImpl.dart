@@ -6,7 +6,7 @@ class SimplePlateauImpl extends Plateau {
 
   List<Room> rooms;
 
-  List<GameCounter> gameCounters;
+  List<GameCounter> gameCounters = new List();
 
   SimplePlateauImpl(this.rooms);
 
