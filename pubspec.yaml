@@ -1,7 +1,7 @@
 name: proto_game
 description: A starting point for Dart libraries or applications.
 version: 0.0.1
-#author: Your Name <email@example.com>
+author: Antonin Lebrard a.lebrard@gmail.com
 #homepage: https://www.example.com
 
 environment:

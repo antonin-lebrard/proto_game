@@ -13,7 +13,7 @@ main() {
   Game game = new GameDecoderJSON().readFromFormat(json);
 
   while(true) {
-    print("You are in the room: ${(game.plateau as SimplePlateauImpl).currentRoom.name}");
+    print("You are in the room: ${(game.plateau as PlateauImpl).currentRoom.name}");
     String line = stdin.readLineSync();
     String command = line.substring(0, line.indexOf(' '));
     if (command == "move"){

@@ -1,6 +1,6 @@
 part of proto_game.room;
 
-class SimplePlateauImpl extends Plateau {
+class PlateauImpl extends Plateau {
 
   Room currentRoom;
 
@@ -8,9 +8,11 @@ class SimplePlateauImpl extends Plateau {
 
   List<GameCounter> gameCounters = new List();
 
-  SimplePlateauImpl(this.rooms);
+  PlateauImpl(this.rooms);
 
   List<Room> getRooms() => rooms;
+
+  Room getCurrentRoom() => currentRoom;
 
   bool move(Direction direction) {
     if (currentRoom.move(direction)){

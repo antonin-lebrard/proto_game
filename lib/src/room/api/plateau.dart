@@ -4,6 +4,8 @@ abstract class Plateau {
 
   List<Room> getRooms();
 
+  Room getCurrentRoom();
+
   bool move(Direction direction);
 
   void gameLoop();

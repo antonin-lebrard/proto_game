@@ -1,0 +1,39 @@
+{
+  "game": {
+    "title": "example",
+    "version": "0.0.0",
+    "globals": [
+      {"name": "testGlobalOne", "type": "num", "value": 0 },
+      {"name": "testGlobalTwo", "type": "string", "value": "test" }
+    ],
+    "player": {
+      "name": "Sicile",
+      "properties": [
+        {"name": "firstPropertyPlayer", "type": "num", "value": 0 },
+        {"name": "firstPropertyPlayer", "type": "num", "value": 100 }
+      ],
+      "inventory": [
+        {"name": "Bag", "type": "wearable" }
+      ]
+    },
+    "rooms": [
+      { "id": "start", "name": "Start",
+        "objects": [
+          {"name": "object1", "type": "consumable" }
+        ],
+        "direction": {
+          "north": "test"
+        }
+      },
+      { "id": "test", "name": "Test",
+        "objects": [
+          {"name": "object2" }
+        ],
+        "direction": {
+          "south": "start"
+        }
+      }
+    ],
+    "currentRoomId": "start"
+  }
+}

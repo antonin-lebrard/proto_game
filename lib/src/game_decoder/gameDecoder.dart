@@ -237,20 +237,20 @@ class GameDecoderJSON extends GameDecoderBase {
       }
       rooms.add(room);
     }
-    plateau = new SimplePlateauImpl(linkRooms(rooms, roomsLinksMap));
+    plateau = new PlateauImpl(linkRooms(rooms, roomsLinksMap));
     if (currentRoomId != null) {
-      for (Room comparedRoom in (plateau as SimplePlateauImpl).rooms){
+      for (Room comparedRoom in (plateau as PlateauImpl).rooms){
         if (currentRoomId.hashCode == comparedRoom.id){
-          (plateau as SimplePlateauImpl).currentRoom = comparedRoom;
+          (plateau as PlateauImpl).currentRoom = comparedRoom;
           break;
         }
       }
-      if ((plateau as SimplePlateauImpl).currentRoom == null)
+      if ((plateau as PlateauImpl).currentRoom == null)
         print("warning, the room id specified by currentRoomId is not existent");
     }
-    if ((plateau as SimplePlateauImpl).currentRoom == null) {
+    if ((plateau as PlateauImpl).currentRoom == null) {
       print("current room set to the fisrt in the list of rooms");
-      (plateau as SimplePlateauImpl).currentRoom = plateau.getRooms()[0];
+      (plateau as PlateauImpl).currentRoom = plateau.getRooms()[0];
     }
     return plateau;
   }
