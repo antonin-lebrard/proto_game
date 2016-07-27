@@ -16,12 +16,12 @@ class CustomizableEventConsumer<E extends Event> extends EventConsumer {
   List<StoredOperation> operations = new List();
 
   CustomizableEventConsumer(String listenTo){
-    EventMappings.eventMappings.forEach((Type key, Map value){
-      if (value['name'] == listenTo){
+    for (Type key in EventMappings.eventMappings.keys){
+      if (EventMappings.eventMappings[key]['name'] == listenTo){
         this.listenTo = key;
         return;
       }
-    });
+    }
   }
 
   bool consume(Event event){

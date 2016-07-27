@@ -359,6 +359,7 @@ class GameDecoderJSON extends GameDecoderBase {
       for (String operation in consumerContent[Globals.APPLY_KEY]){
         consumer.operations.add(new StoredOperation.fromString(operation));
       }
+      consumers.add(consumer);
     }
     return consumers;
   }

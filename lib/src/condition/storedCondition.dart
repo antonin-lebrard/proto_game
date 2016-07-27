@@ -9,8 +9,8 @@ class StoredCondition {
   List<Operation> operations = new List();
 
   StoredCondition.fromString(EventConsumer parent, String condition) {
-    DecodingHelper.decompose(condition, decodeOperationPart);
     this.eventType = parent.listenTo;
+    DecodingHelper.decompose(condition, decodeOperationPart);
   }
 
   decodeOperationPart(String s) {
@@ -29,12 +29,13 @@ class StoredCondition {
 
   Object decodeVariable(String s) {
     List<String> varPart = s.split('.');
-    if (varPart[0] == "params"){
-      EventMappings.eventMappings[eventType]['params'].forEach((String key, Type value){
+    if (varPart[0] == "param"){
+      for (String key in EventMappings.eventMappings[eventType]['params'].keys){
+        Type value = EventMappings.eventMappings[eventType]['params'][key];
         if (key == varPart[1]){
           return new ExpectedEventVariable(key, value);
         }
-      });
+      }
     }
     if (varPart[0] == "global" || varPart[0] == "globals") {
       for (GlobalVariable g in Game.game.globals) {
@@ -54,7 +55,7 @@ class StoredCondition {
     }
     else if (varPart[0] == "rooms") {
       for (Room room in Game.game.player.plateau.rooms) {
-        if (room.id == varPart[1]) {
+        if (room.id == varPart[1].hashCode) {
           return room;
         }
       }

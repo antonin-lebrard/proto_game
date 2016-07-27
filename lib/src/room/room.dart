@@ -2,7 +2,7 @@ part of proto_game.room;
 
 class Room {
 
-  String id;
+  int id;
 
   String name;
 
