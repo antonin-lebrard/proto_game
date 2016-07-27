@@ -1,8 +1,10 @@
 part of proto_game.player;
 
-class BasePlayer {
+class Player {
 
   String name = "Player";
+
+  Plateau plateau;
 
   Map<String, BaseProperty> mapGlobalProperties = new Map();
 
@@ -18,8 +20,13 @@ class BasePlayer {
     return new ModifiedProperty(mapGlobalProperties[name], wearing);
   }
 
-}
-
-class Player extends BasePlayer {
-
+  bool move(Direction direction){
+    if (new EventsManager().emitEvent(new MoveEvent(plateau.getCurrentRoom(), plateau.getCurrentRoom().getNextRooms()[direction]))) {
+      if (plateau.move(direction)) {
+        return true;
+      }
+      return false;
+    }
+    return false;
+  }
 }

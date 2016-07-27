@@ -1,6 +1,10 @@
 part of proto_game.room;
 
-class SimpleRoomImpl extends Room {
+class Room {
+
+  String id;
+
+  String name;
 
   String description;
 
@@ -8,9 +12,7 @@ class SimpleRoomImpl extends Room {
 
   Map<Direction, Room> nextRooms;
 
-  SimpleRoomImpl(num id, String name, this.description)
-    : super(id, name)
-  {}
+  Room(this.id, this.name, this.description);
 
   String getDescription() => description;
 

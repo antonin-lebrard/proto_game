@@ -13,25 +13,43 @@
         {"name": "firstPropertyPlayer", "type": "num", "value": 100 }
       ],
       "inventory": [
-        {"name": "Bag", "type": "wearable" }
+        {"name": "Bag", "type": "wearable", "description": "placeholder bag \n description" }
       ]
     },
     "rooms": [
-      { "id": "start", "name": "Start",
+      { "id": "start", "name": "Start", "description": "the starting room",
         "objects": [
-          {"name": "object1", "type": "consumable" }
+          {"name": "object1", "type": "consumable", "description": "object1 \n description" }
         ],
         "direction": {
-          "north": "test"
+          "north": "test",
+          "east": "test2"
         }
       },
-      { "id": "test", "name": "Test",
+      { "id": "test", "name": "Test", "description": "other room test",
         "objects": [
-          {"name": "object2" }
+          {"name": "object2", "description": "object2 \n description" }
         ],
         "direction": {
           "south": "start"
         }
+      },
+      { "id": "test2", "name": "Test2", "description": "another test room",
+        "direction": {
+          "west": "start"
+        }
+      }
+    ],
+    "events": [
+      { "listenTo": "move",
+        "conditions": [
+          "param.from == rooms.start",
+          "param.to == rooms.test"
+        ],
+        "apply":[
+          "globals.testGlobalOne += 10",
+          "globals.testGlobalTwo = 'applying event consumer effect'"
+        ]
       }
     ],
     "currentRoomId": "start"

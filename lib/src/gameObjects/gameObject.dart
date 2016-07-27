@@ -1,6 +1,6 @@
 part of proto_game.gameObjects;
 
-class BaseGameObject{
+class BaseGameObject {
 
   num id;
 
@@ -9,6 +9,10 @@ class BaseGameObject{
   String description;
 
   BaseGameObject(this.id, this.name, this.description);
+
+  bool executeAction(String action, Player player){
+    return false;
+  }
 
   toString() => name;
 

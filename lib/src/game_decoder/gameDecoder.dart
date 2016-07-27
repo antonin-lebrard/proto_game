@@ -29,7 +29,10 @@ class GameDecoderJSON extends GameDecoderBase {
           game.player = parsePlayer(gameJson[key]);
           break;
         case Globals.PLATEAU_KEY:
-          game.plateau = parsePlateau(gameJson[key], gameJson[Globals.CURRENT_ROOM_KEY]);
+          game.player.plateau = parsePlateau(gameJson[key], gameJson[Globals.CURRENT_ROOM_KEY]);
+          break;
+        case Globals.EVENTS_KEY:
+          game.consumers = parseConsumers(gameJson[key]);
           break;
         case Globals.CURRENT_ROOM_KEY:
           break;
@@ -41,7 +44,7 @@ class GameDecoderJSON extends GameDecoderBase {
     return game;
   }
 
-  List<GlobalVariable> parseGlobals(var globalsContent){
+  static List<GlobalVariable> parseGlobals(var globalsContent){
     if (globalsContent is Map) globalsContent = new List()..add(globalsContent);
     List<GlobalVariable> globals = new List();
     for (Map globalContent in globalsContent){
@@ -77,7 +80,7 @@ class GameDecoderJSON extends GameDecoderBase {
     return globals;
   }
 
-  Player parsePlayer(var playerContent){
+  static Player parsePlayer(var playerContent){
     if (!(playerContent is Map)){
       print("player is not formatted correctly, expected Map definition {}");
       return null;
@@ -102,7 +105,7 @@ class GameDecoderJSON extends GameDecoderBase {
     return player;
   }
 
-  Map<String, BaseProperty> parseProperties(var propertiesContent){
+  static Map<String, BaseProperty> parseProperties(var propertiesContent){
     if (propertiesContent is Map) propertiesContent = new List()..add(propertiesContent);
     Map<String, BaseProperty> propertiesMap = new Map();
     for (Map propertyContent in propertiesContent){
@@ -138,7 +141,7 @@ class GameDecoderJSON extends GameDecoderBase {
     return propertiesMap;
   }
 
-  List<BaseGameObject> parseInventory(var inventoryContent){
+  static List<BaseGameObject> parseInventory(var inventoryContent){
     if (inventoryContent is Map) inventoryContent = new List()..add(inventoryContent);
     List<BaseGameObject> inventory = new List();
     for (Map objectContent in inventoryContent){
@@ -148,9 +151,9 @@ class GameDecoderJSON extends GameDecoderBase {
     return inventory;
   }
 
-  BaseGameObject parseObject(var objectContent) {
+  static BaseGameObject parseObject(var objectContent) {
     if (!(objectContent is Map)) {
-      print("object is not formated correctly, will not be parsed. (Content parsed : $objectContent)");
+      print("object is not formated correctly, will not be parsed. (Content not parsed : $objectContent)");
       return null;
     }
     if (objectContent[Globals.NAME_KEY] == null){
@@ -176,7 +179,7 @@ class GameDecoderJSON extends GameDecoderBase {
     return object;
   }
 
-  List<WearableGameObject> parseWearing(var wearingContent){
+  static List<WearableGameObject> parseWearing(var wearingContent){
     if (wearingContent is Map) wearingContent = new List()..add(wearingContent);
     List<WearableGameObject> wearing = new List();
     for (Map objectContent in wearingContent){
@@ -194,7 +197,7 @@ class GameDecoderJSON extends GameDecoderBase {
     return wearing;
   }
 
-  Plateau parsePlateau(var plateauContent, var currentRoomId){
+  static Plateau parsePlateau(var plateauContent, var currentRoomId){
     if (plateauContent is Map) plateauContent = new List()..add(plateauContent);
     Plateau plateau;
     List<Room> rooms = new List();
@@ -208,7 +211,7 @@ class GameDecoderJSON extends GameDecoderBase {
         print("name of room not specified, will not be parsed");
         continue;
       }
-      Room room = new SimpleRoomImpl(roomContent[Globals.ID_KEY].hashCode, roomContent[Globals.NAME_KEY], roomContent[Globals.DESCRIPTION_KEY]);
+      Room room = new Room(roomContent[Globals.ID_KEY].hashCode, roomContent[Globals.NAME_KEY], roomContent[Globals.DESCRIPTION_KEY]);
       List<BaseGameObject> objects = new List();
       var objectsContent = roomContent[Globals.OBJECTS_KEY];
       if (objectsContent != null){
@@ -218,8 +221,8 @@ class GameDecoderJSON extends GameDecoderBase {
           if (object != null) objects.add(object);
         }
       }
-      (room as SimpleRoomImpl).objects = objects;
-      (room as SimpleRoomImpl).nextRooms = new Map();
+      room.objects = objects;
+      room.nextRooms = new Map();
       var nextRoomsContent = roomContent[Globals.DIRECTION_KEY];
       if (nextRoomsContent != null) {
         if (!(nextRoomsContent is Map))
@@ -237,25 +240,25 @@ class GameDecoderJSON extends GameDecoderBase {
       }
       rooms.add(room);
     }
-    plateau = new PlateauImpl(linkRooms(rooms, roomsLinksMap));
+    plateau = new Plateau(linkRooms(rooms, roomsLinksMap));
     if (currentRoomId != null) {
-      for (Room comparedRoom in (plateau as PlateauImpl).rooms){
+      for (Room comparedRoom in plateau.rooms){
         if (currentRoomId.hashCode == comparedRoom.id){
-          (plateau as PlateauImpl).currentRoom = comparedRoom;
+          plateau.currentRoom = comparedRoom;
           break;
         }
       }
-      if ((plateau as PlateauImpl).currentRoom == null)
+      if (plateau.currentRoom == null)
         print("warning, the room id specified by currentRoomId is not existent");
     }
-    if ((plateau as PlateauImpl).currentRoom == null) {
+    if (plateau.currentRoom == null) {
       print("current room set to the fisrt in the list of rooms");
-      (plateau as PlateauImpl).currentRoom = plateau.getRooms()[0];
+      plateau.currentRoom = plateau.getRooms()[0];
     }
     return plateau;
   }
 
-  Direction parseDirection(var directionContent){
+  static Direction parseDirection(var directionContent){
     if (!(directionContent is String)){
       print("direction key is not a string : $directionContent, will not be parsed");
       return null;
@@ -308,9 +311,9 @@ class GameDecoderJSON extends GameDecoderBase {
     return direction;
   }
 
-  List<Room> linkRooms(List<Room> rooms, Map<Room, Map<Direction, num>> linkingMap) {
+  static List<Room> linkRooms(List<Room> rooms, Map<Room, Map<Direction, num>> linkingMap) {
     List<Room> linkedRooms = new List();
-    for (SimpleRoomImpl room in linkingMap.keys) {
+    for (Room room in linkingMap.keys) {
       Map<Direction, Room> nextRooms = new Map();
       for (Direction dirKey in linkingMap[room].keys) {
         Room linkRoom;
@@ -331,6 +334,33 @@ class GameDecoderJSON extends GameDecoderBase {
       linkedRooms.add(room);
     }
     return linkedRooms;
+  }
+
+  static List<EventConsumer> parseConsumers(var consumersContent){
+    if (consumersContent is Map) consumersContent = new List()..add(consumersContent);
+    List<EventConsumer> consumers = new List();
+    for (Map consumerContent in consumersContent){
+      if (consumerContent[Globals.LISTEN_KEY] == null){
+        print("listenTo key not specified, will not be parsed");
+        continue;
+      }
+      if (consumerContent[Globals.CONDITIONS_KEY] == null)
+        consumerContent[Globals.CONDITIONS_KEY] = new List();
+      if (consumerContent[Globals.CONDITIONS_KEY].length == 0)
+        print("warning, event consumer without conditions, will consume each event it listens to");
+      if (consumerContent[Globals.APPLY_KEY] == null || consumerContent[Globals.APPLY_KEY].length == 0) {
+        print("no apply in event, event doing nothing, no parsing");
+        continue;
+      }
+      CustomizableEventConsumer consumer = new CustomizableEventConsumer(consumerContent[Globals.LISTEN_KEY]);
+      for (String condition in consumerContent[Globals.CONDITIONS_KEY]){
+        consumer.conditions.add(new StoredCondition.fromString(consumer, condition));
+      }
+      for (String operation in consumerContent[Globals.APPLY_KEY]){
+        consumer.operations.add(new StoredOperation.fromString(operation));
+      }
+    }
+    return consumers;
   }
 
 }

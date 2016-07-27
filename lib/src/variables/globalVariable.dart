@@ -1,11 +1,13 @@
 part of proto_game.variables;
 
-abstract class GlobalVariable<T> {
+abstract class GlobalVariable<T> extends HasValue<T> {
 
   String name;
   T value;
 
   GlobalVariable(this.name, this.value);
+
+  T getValue() => value;
 
 }
 

@@ -1,6 +1,6 @@
 part of proto_game.properties;
 
-abstract class BaseProperty<T extends Object>{
+abstract class BaseProperty<T> extends HasValue<T> {
 
   T value;
 
@@ -9,6 +9,8 @@ abstract class BaseProperty<T extends Object>{
   String description;
 
   BaseProperty(this.name, this.description, this.value);
+
+  T getValue() => value;
 
 }
 
@@ -29,11 +31,11 @@ class ModifiedProperty extends BaseProperty {
   {
     if (modifierContainers != null) {
       modifierContainers.forEach((HasModifier modifierContainer) {
-        if (modifierContainer.getModifier().getModifiedValue(value) == null) {
+        if (modifierContainer.getModifier().getModifiedValue(this) == null) {
           print("Something wrong happened with property modifier : " + modifierContainer.getModifier().toString());
           return;
         }
-        this.value = modifierContainer.getModifier().getModifiedValue(value);
+        this.value = modifierContainer.getModifier().getModifiedValue(this);
       });
     }
   }

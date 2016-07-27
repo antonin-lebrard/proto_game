@@ -1,6 +1,6 @@
 part of proto_game.room;
 
-class PlateauImpl extends Plateau {
+class Plateau {
 
   Room currentRoom;
 
@@ -8,7 +8,7 @@ class PlateauImpl extends Plateau {
 
   List<GameCounter> gameCounters = new List();
 
-  PlateauImpl(this.rooms);
+  Plateau(this.rooms);
 
   List<Room> getRooms() => rooms;
 

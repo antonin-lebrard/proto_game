@@ -1,0 +1,17 @@
+part of proto_game.operation;
+
+enum Operation {
+  EQUALS_TO,
+  ASSIGN,
+  MINUS,
+  PLUS,
+  SUPERIOR,
+  INFERIOR,
+  SUPERIOR_EQUALS,
+  INFERIOR_EQUALS,
+  PLUS_ASSIGN,
+  MINUS_ASSIGN,
+  CONDITIONAL,
+  CONDITIONAL_SEPARATOR,
+}
+

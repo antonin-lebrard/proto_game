@@ -12,6 +12,7 @@ class Globals {
   static const String GLOBALS_KEY = 'globals';
   static const String PLAYER_KEY = 'player';
   static const String PLATEAU_KEY = 'rooms';
+  static const String EVENTS_KEY = 'events';
   static const String CURRENT_ROOM_KEY = 'currentRoomId';
 
   static const String PROPERTIES_KEY = 'properties';
@@ -21,5 +22,8 @@ class Globals {
   static const String DIRECTION_KEY = 'direction';
   static const String OBJECTS_KEY = 'objects';
 
+  static const String LISTEN_KEY = 'listenTo';
+  static const String CONDITIONS_KEY = 'conditions';
+  static const String APPLY_KEY = 'apply';
 
 }
