@@ -16,6 +16,10 @@ class Game {
 
   List<GlobalVariable> globals;
 
-  List<EventConsumer> consumers;
+  set consumers(List<EventConsumer> consumers) {
+    consumers.forEach((EventConsumer ec){
+      new EventsManager().addEventListener(ec.listenTo, ec);
+    });
+  }
 
 }

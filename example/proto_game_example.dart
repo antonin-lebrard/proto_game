@@ -13,6 +13,9 @@ main() {
   String json = new File('example/example.json').readAsStringSync();
   Game game = new GameDecoderJSON().readFromFormat(json);
 
+  // meaningless line just to put breakpoint
+  var x = 0;
+
   while(true) {
     print("You are in the room: ${game.player.plateau.currentRoom.name}");
     String line = stdin.readLineSync();

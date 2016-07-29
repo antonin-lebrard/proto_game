@@ -2,15 +2,11 @@ part of proto_game.properties;
 
 abstract class BaseProperty<T> extends HasValue<T> {
 
-  T value;
-
   String name;
 
   String description;
 
-  BaseProperty(this.name, this.description, this.value);
-
-  T getValue() => value;
+  BaseProperty(this.name, this.description, T value) : super(value);
 
 }
 
@@ -27,7 +23,7 @@ class BoolProperty extends BaseProperty<bool>{
 class ModifiedProperty extends BaseProperty {
 
   ModifiedProperty(BaseProperty base, List<HasModifier> modifierContainers)
-    : super(base.name, base.description, base.value)
+    : super(base.name, base.description, base.getValue())
   {
     if (modifierContainers != null) {
       modifierContainers.forEach((HasModifier modifierContainer) {
@@ -35,9 +31,14 @@ class ModifiedProperty extends BaseProperty {
           print("Something wrong happened with property modifier : " + modifierContainer.getModifier().toString());
           return;
         }
-        this.value = modifierContainer.getModifier().getModifiedValue(this);
+        super.applyValue(modifierContainer.getModifier().getModifiedValue(this));
       });
     }
+  }
+
+  @override
+  void applyValue(other){
+    print("Warning : not supposed to change value of ModifiedProperty, do nothing");
   }
 
 }

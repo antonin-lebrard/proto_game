@@ -1,15 +1,5 @@
 part of proto_game.operation;
 
-class TempVariable<T> extends HasValue<T>{
-
-  T value;
-
-  TempVariable(this.value);
-
-  T getValue() => value;
-
-}
-
 class StoredOperation {
 
   List<HasValue> variables = new List();

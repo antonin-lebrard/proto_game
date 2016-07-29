@@ -1,7 +1,25 @@
 part of proto_game.operation;
 
+
+class TempVariable<T> extends HasValue<T>{
+
+  TempVariable(T value) : super(value);
+
+}
+
+class ExpectedEventVariable extends HasValue {
+
+  String name;
+  Type expectedType;
+
+  ExpectedEventVariable(this.name, this.expectedType) : super(null);
+
+  void resolveVariable(Event event) { applyValue(event.properties[name]); }
+
+}
+
 class DecodingHelper {
-  static String _allOperators = "+-=><?";
+  static String _allOperators = "+-/*%=><?";
   static bool _stringMode = false;
   static bool _fromQuote = false;
   static bool get isStringMode => _stringMode;
@@ -48,8 +66,14 @@ class DecodingHelper {
       case "=" : return Operation.ASSIGN;
       case "+" : return Operation.PLUS;
       case "-" : return Operation.MINUS;
+      case "/" : return Operation.DIVIDE;
+      case "*" : return Operation.MULTIPLY;
+      case "%" : return Operation.MODULO;
       case "+=": return Operation.PLUS_ASSIGN;
       case "-=": return Operation.MINUS_ASSIGN;
+      case "/=": return Operation.DIVIDE_ASSIGN;
+      case "*=": return Operation.MULTIPLY_ASSIGN;
+      case "%=": return Operation.MODULO_ASSIGN;
       case ">" : return Operation.SUPERIOR;
       case "<" : return Operation.INFERIOR;
       case ">=": return Operation.SUPERIOR_EQUALS;
@@ -72,6 +96,18 @@ class DecodingHelper {
     } else if (s == "false"){
       return new TempVariable<bool>(false);
     }
-    return ifNotTemp(s);
+    return ifNotTemp();
+  }
+
+  static ExpectedEventVariable decodeExpectedVariable(List<String> varPart, Type eventType){
+    if (varPart[0] == "param"){
+      for (String key in EventMappings.eventMappings[eventType]['params'].keys){
+        Type value = EventMappings.eventMappings[eventType]['params'][key];
+        if (key == varPart[1]){
+          return new ExpectedEventVariable(key, value);
+        }
+      }
+    }
+    return null;
   }
 }
