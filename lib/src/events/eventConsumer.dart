@@ -25,7 +25,13 @@ class CustomizableEventConsumer<E extends Event> extends EventConsumer {
   }
 
   bool consume(Event event){
-    // TODO
+    if (conditions.every((StoredCondition condition) => condition.isConditionTrue(event))) {
+      for (StoredOperation o in operations) {
+        o.applyOperation();
+      }
+      return true;
+    }
+    return false;
   }
 
 }

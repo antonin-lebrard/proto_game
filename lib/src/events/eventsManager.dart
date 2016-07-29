@@ -31,7 +31,7 @@ class EventsManager {
   bool emitEvent(Event event){
     List<EventConsumer> consumers = _consumers[event.runtimeType];
     if (consumers == null || consumers.length == 0)
-      return true;
+      return false;
     for (EventConsumer consumer in consumers){
       if (consumer.consume(event)){
         return true;

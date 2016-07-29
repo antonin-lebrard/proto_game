@@ -6,10 +6,14 @@ class StoredOperation {
   List<Operation> operations = new List();
 
   StoredOperation.fromString(String s){
-    DecodingHelper.decompose(s, decodeOperationPart);
+    DecodingHelper.decompose(s, _decodeOperationPart);
   }
 
-  decodeOperationPart(String s){
+  void applyOperation() {
+    OperationHelper.applyOperation(variables, operations);
+  }
+
+  _decodeOperationPart(String s){
     if (s.length == 0) print("problem decoding operation part, operation part lenght == 0");
     if (DecodingHelper.isOperator(s[0])){
       Operation o = DecodingHelper.decodeOperation(s);
@@ -17,13 +21,13 @@ class StoredOperation {
       else print("problem decoding operator");
     }
     else {
-      HasValue v = DecodingHelper.decodeTempVariable(s, decodeVariable);
+      HasValue v = DecodingHelper.decodeTempVariable(s, _decodeVariable);
       if (v != null) variables.add(v);
       else print("problem decoding variable");
     }
   }
 
-  HasValue decodeVariable(String s) {
+  HasValue _decodeVariable(String s) {
     List<String> varPart = s.split('.');
     if (varPart[0] == "global" || varPart[0] == "globals") {
       for (GlobalVariable g in Game.game.globals) {

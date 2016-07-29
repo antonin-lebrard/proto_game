@@ -10,10 +10,14 @@ class StoredCondition {
 
   StoredCondition.fromString(EventConsumer parent, String condition) {
     this.eventType = parent.listenTo;
-    DecodingHelper.decompose(condition, decodeOperationPart);
+    DecodingHelper.decompose(condition, _decodeOperationPart);
   }
 
-  decodeOperationPart(String s) {
+  bool isConditionTrue(Event event){
+    return true;
+  }
+
+  _decodeOperationPart(String s) {
     if (s.length == 0) print("problem decoding operation part, operation part lenght == 0");
     if (DecodingHelper.isOperator(s[0])){
       Operation o = DecodingHelper.decodeOperation(s);
@@ -21,13 +25,13 @@ class StoredCondition {
       else print("problem decoding operator");
     }
     else {
-      Object v = DecodingHelper.decodeTempVariable(s, decodeVariable);
+      Object v = DecodingHelper.decodeTempVariable(s, _decodeVariable);
       if (v != null) variables.add(v);
       else print("problem decoding variable");
     }
   }
 
-  Object decodeVariable(String s) {
+  Object _decodeVariable(String s) {
     List<String> varPart = s.split('.');
 
     Object o = DecodingHelper.decodeExpectedVariable(varPart, eventType);

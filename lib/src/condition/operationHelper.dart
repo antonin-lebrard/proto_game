@@ -6,7 +6,7 @@ class OperationHelper {
   static bool _isValidOperations(List<HasValue> variables, List<Operation> operations){
     if (!(variables.length == operations.length + 1)) return false;
     if (!(operations.length > 0)) return false;
-    if (!(operations[0] == Operation.ASSIGN || operations[0] == Operation.PLUS_ASSIGN || operations[0] == Operation.MINUS_ASSIGN)) return false;
+    if (!(operations[0].isAssign)) return false;
     return true;
   }
 
@@ -75,7 +75,7 @@ class OperationHelper {
         }
         return;
       }
-      variables..removeLast..removeLast..add(result);
+      variables..removeLast()..removeLast()..add(result);
       operations.removeLast();
     }
   }

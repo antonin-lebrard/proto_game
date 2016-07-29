@@ -96,7 +96,7 @@ class DecodingHelper {
     } else if (s == "false"){
       return new TempVariable<bool>(false);
     }
-    return ifNotTemp();
+    return ifNotTemp(s);
   }
 
   static ExpectedEventVariable decodeExpectedVariable(List<String> varPart, Type eventType){
