@@ -13,7 +13,16 @@ main() {
   String json = new File('example/example.json').readAsStringSync();
   Game game = new GameDecoderJSON().readFromFormat(json);
 
-  new EventsManager().emitEvent(new MoveEvent(game.player.plateau.currentRoom, game.player.plateau.currentRoom.getNextRooms()[game.player.plateau.currentRoom.getNextRooms().keys.first]));
+  Room start = game.player.plateau.rooms.firstWhere((Room elem) => elem.name == "Start");
+  Room test = game.player.plateau.rooms.firstWhere((Room elem) => elem.name == "Test");
+  Room test2 = game.player.plateau.rooms.firstWhere((Room elem) => elem.name == "Test2");
+
+  new EventsManager().emitEvent(new MoveEvent(start, test));
+  new EventsManager().emitEvent(new MoveEvent(start, test));
+  new EventsManager().emitEvent(new MoveEvent(start, test2));
+
+  new EventsManager().emitEvent(new MoveEvent(test, start));
+  new EventsManager().emitEvent(new MoveEvent(test, test2));
 
   // meaningless line just to put breakpoint
   var x = 0;

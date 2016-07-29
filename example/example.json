@@ -3,8 +3,9 @@
     "title": "example",
     "version": "0.0.0",
     "globals": [
-      {"name": "testGlobalOne", "type": "num", "value": 0 },
-      {"name": "testGlobalTwo", "type": "string", "value": "test" }
+      {"name": "numGl", "type": "num", "value": 0 },
+      {"name": "stringGl", "type": "string", "value": "test" },
+      {"name": "boolGl", "type": "bool", "value": true }
     ],
     "player": {
       "name": "Sicile",
@@ -47,8 +48,18 @@
           "param.to == rooms.test"
         ],
         "apply":[
-          "globals.testGlobalOne += 10",
-          "globals.testGlobalTwo = 'applying event consumer effect'"
+          "globals.numGl += 10",
+          "globals.stringGl = 'applying event consumer effect'"
+        ]
+      },
+      { "listenTo": "move",
+        "conditions": [
+          "param.from == rooms.test"
+        ],
+        "apply":[
+          "globals.numGl -= globals.boolGl ? 0 : 100",
+          "globals.stringGl += ' add this bit'",
+          "globals.boolGl = false"
         ]
       }
     ],

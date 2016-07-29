@@ -5,7 +5,7 @@ class StoredCondition {
 
   Type eventType;
 
-  List<Object> variables = new List();
+  List<HasValue> variables = new List();
   List<Operation> operations = new List();
 
   StoredCondition.fromString(EventConsumer parent, String condition) {
@@ -14,7 +14,11 @@ class StoredCondition {
   }
 
   bool isConditionTrue(Event event){
-    return true;
+    variables.where((HasValue elem) => elem is ExpectedEventVariable).forEach((ExpectedEventVariable e) => e.resolveVariable(event));
+    bool result = OperationHelper.applyCondition(variables.toList(), operations.toList());
+    // need to reset value of these variables, to not have reminiscence of old values at the next event
+    variables.where((HasValue elem) => elem is ExpectedEventVariable).forEach((ExpectedEventVariable e) => e.resetVariable());
+    return result;
   }
 
   _decodeOperationPart(String s) {
@@ -25,16 +29,16 @@ class StoredCondition {
       else print("problem decoding operator");
     }
     else {
-      Object v = DecodingHelper.decodeTempVariable(s, _decodeVariable);
+      HasValue v = DecodingHelper.decodeTempVariable(s, _decodeVariable);
       if (v != null) variables.add(v);
       else print("problem decoding variable");
     }
   }
 
-  Object _decodeVariable(String s) {
+  HasValue _decodeVariable(String s) {
     List<String> varPart = s.split('.');
 
-    Object o = DecodingHelper.decodeExpectedVariable(varPart, eventType);
+    HasValue o = DecodingHelper.decodeExpectedVariable(varPart, eventType);
     if (o != null) return o;
 
     if (varPart[0] == "global" || varPart[0] == "globals") {
@@ -56,7 +60,7 @@ class StoredCondition {
     else if (varPart[0] == "rooms") {
       for (Room room in Game.game.player.plateau.rooms) {
         if (room.id == varPart[1].hashCode) {
-          return room;
+          return new TempVariable(room);
         }
       }
     }

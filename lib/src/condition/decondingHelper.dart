@@ -16,10 +16,12 @@ class ExpectedEventVariable extends HasValue {
 
   void resolveVariable(Event event) { applyValue(event.properties[name]); }
 
+  void resetVariable() { applyValue(null); }
+
 }
 
 class DecodingHelper {
-  static String _allOperators = "+-/*%=><?";
+  static String _allOperators = "+-/*%=><?:";
   static bool _stringMode = false;
   static bool _fromQuote = false;
   static bool get isStringMode => _stringMode;

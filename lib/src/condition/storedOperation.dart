@@ -10,7 +10,7 @@ class StoredOperation {
   }
 
   void applyOperation() {
-    OperationHelper.applyOperation(variables, operations);
+    OperationHelper.applyOperation(variables.toList(), operations.toList());
   }
 
   _decodeOperationPart(String s){

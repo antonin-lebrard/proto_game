@@ -3,10 +3,18 @@ part of proto_game.operation;
 
 class OperationHelper {
 
-  static bool _isValidOperations(List<HasValue> variables, List<Operation> operations){
+  static bool _isValidOperation(List<HasValue> variables, List<Operation> operations){
     if (!(variables.length == operations.length + 1)) return false;
     if (!(operations.length > 0)) return false;
     if (!(operations[0].isAssign)) return false;
+    return true;
+  }
+
+  static bool _isValidCondition(List<HasValue> variables, List<Operation> operations){
+    if (!(variables.length == operations.length + 1)) return false;
+    if (!(operations.length > 0)) return false;
+    if (!(operations[0].isCondition)) return false;
+    if (operations.any((Operation elem) => elem.isAssign)) return false;
     return true;
   }
 
@@ -57,29 +65,6 @@ class OperationHelper {
     return false;
   }
 
-  static void applyOperation(List<HasValue> variables, List<Operation> operations){
-    if (!_isValidOperations(variables, operations)){
-      print("Operation not valid");
-      return;
-    }
-    if (!_processConditionalsOperations(variables, operations)) return;
-    int nbAssigns = operations.takeWhile((Operation elem) => elem.isAssign).length;
-    while (operations.length > 0){
-      HasValue result = _doOperation(variables[variables.length - 2], operations.last, variables.last);
-      if (result == null){
-        print("Wrong operation : something wrong happened in the calculation");
-        if (nbAssigns != 0 && nbAssigns != operations.takeWhile((Operation elem) => elem.isAssign).length){
-          print("Sould propably exit game now, as assignements were made, propably corrupting variables");
-        } else {
-          print("no assignements made, could continue game, but you should probably check operations");
-        }
-        return;
-      }
-      variables..removeLast()..removeLast()..add(result);
-      operations.removeLast();
-    }
-  }
-
   static HasValue _doOperation(HasValue one, Operation operation, HasValue second){
     HasValue result;
     if (operation.isAssign){
@@ -101,6 +86,48 @@ class OperationHelper {
       if (operation == Operation.MODULO)   result = new TempVariable(one.getValue() % second.getValue());
     }
     return result;
+  }
+
+  static void applyOperation(List<HasValue> variables, List<Operation> operations){
+    if (!_isValidOperation(variables, operations)){
+      print("Operation not valid");
+      return;
+    }
+    if (!_processConditionalsOperations(variables, operations)) return;
+    int nbAssigns = operations.takeWhile((Operation elem) => elem.isAssign).length;
+    while (operations.length > 0){
+      HasValue result = _doOperation(variables[variables.length - 2], operations.last, variables.last);
+      if (result == null){
+        print("Wrong operation : something wrong happened in the calculation");
+        if (nbAssigns != 0 && nbAssigns != operations.takeWhile((Operation elem) => elem.isAssign).length){
+          print("Sould propably exit game now, as assignements were made, propably corrupting variables");
+        } else {
+          print("no assignements made, could continue game, but you should probably check operations");
+        }
+        return;
+      }
+      variables..removeLast()..removeLast()..add(result);
+      operations.removeLast();
+    }
+  }
+
+  static bool applyCondition(List<HasValue> variables, List<Operation> operations){
+    if (!_isValidCondition(variables, operations)){
+      print("Operation not valid");
+      return false;
+    }
+    if (!_processConditionalsOperations(variables, operations)) return false;
+    HasValue result;
+    while (operations.length > 0){
+      result = _doOperation(variables[variables.length - 2], operations.last, variables.last);
+      if (result == null){
+        print("Wrong operation : something wrong happened in the calculation");
+        return false;
+      }
+      variables..removeLast()..removeLast()..add(result);
+      operations.removeLast();
+    }
+    return result.getValue();
   }
 
 }
