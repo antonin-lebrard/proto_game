@@ -43,7 +43,6 @@
     ],
     "events": [
       { "listenTo": "move",
-        "stopEvent": true,
         "conditions": [
           "param.from == rooms.start",
           "param.to == rooms.test"
@@ -54,7 +53,6 @@
         ]
       },
       { "listenTo": "move",
-        "stopEvent": false,
         "conditions": [
           "param.from == rooms.test"
         ],

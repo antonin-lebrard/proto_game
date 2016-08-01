@@ -38,9 +38,9 @@ class StoredOperation {
     }
     else if (varPart[0] == "player") {
       if (varPart[1] == "properties") {
-        for (String key in Game.game.player.mapGlobalProperties.keys) {
+        for (String key in Game.game.player.properties.keys) {
           if (varPart[2] == key){
-            return Game.game.player.mapGlobalProperties[key];
+            return Game.game.player.properties[key];
           }
         }
       }

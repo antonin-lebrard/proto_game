@@ -23,6 +23,8 @@ class Globals {
   static const String OBJECTS_KEY = 'objects';
 
   static const String LISTEN_KEY = 'listenTo';
+  static const String STOP_EVENT_KEY = 'stopEvent';
+  static const String ANY_CONDITION_KEY = 'anyCondition';
   static const String CONDITIONS_KEY = 'conditions';
   static const String APPLY_KEY = 'apply';
 

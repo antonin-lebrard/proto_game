@@ -92,7 +92,7 @@ class GameDecoderJSON extends GameDecoderBase {
           player.name = playerContent[key];
           break;
         case Globals.PROPERTIES_KEY:
-          player.mapGlobalProperties = parseProperties(playerContent[key]);
+          player.properties = parseProperties(playerContent[key]);
           break;
         case Globals.INVENTORY_KEY:
           player.inventory = parseInventory(playerContent[key]);
@@ -344,6 +344,10 @@ class GameDecoderJSON extends GameDecoderBase {
         print("listenTo key not specified, will not be parsed");
         continue;
       }
+      if (consumerContent[Globals.STOP_EVENT_KEY] == null)
+        consumerContent[Globals.STOP_EVENT_KEY] = false;
+      if (consumerContent[Globals.ANY_CONDITION_KEY] == null)
+        consumerContent[Globals.ANY_CONDITION_KEY] = false;
       if (consumerContent[Globals.CONDITIONS_KEY] == null)
         consumerContent[Globals.CONDITIONS_KEY] = new List();
       if (consumerContent[Globals.CONDITIONS_KEY].length == 0)
@@ -352,7 +356,7 @@ class GameDecoderJSON extends GameDecoderBase {
         print("no apply in event, event doing nothing, no parsing");
         continue;
       }
-      CustomizableEventConsumer consumer = new CustomizableEventConsumer(consumerContent[Globals.LISTEN_KEY]);
+      CustomizableEventConsumer consumer = new CustomizableEventConsumer(consumerContent[Globals.LISTEN_KEY], consumerContent[Globals.STOP_EVENT_KEY], consumerContent[Globals.ANY_CONDITION_KEY]);
       for (String condition in consumerContent[Globals.CONDITIONS_KEY]){
         consumer.conditions.add(new StoredCondition.fromString(consumer, condition));
       }

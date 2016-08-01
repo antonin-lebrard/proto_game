@@ -6,18 +6,18 @@ class Player {
 
   Plateau plateau;
 
-  Map<String, BaseProperty> mapGlobalProperties = new Map();
+  Map<String, BaseProperty> properties = new Map();
 
   List<BaseGameObject> inventory = new List();
 
   List<WearableGameObject> wearing = new List();
 
   BaseProperty getProperty(String name){
-    if (mapGlobalProperties[name] == null){
+    if (properties[name] == null){
       print("Wrong name, property $name does not exist");
       return null;
     }
-    return new ModifiedProperty(mapGlobalProperties[name], wearing);
+    return new ModifiedProperty(properties[name], wearing);
   }
 
   bool move(Direction direction){
