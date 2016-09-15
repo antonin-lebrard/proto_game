@@ -11,7 +11,7 @@
       "name": "Sicile",
       "properties": [
         {"name": "firstPropertyPlayer", "type": "num", "value": 0 },
-        {"name": "firstPropertyPlayer", "type": "num", "value": 100 }
+        {"name": "secondPropertyPlayer", "type": "num", "value": 100 }
       ],
       "inventory": [
         {"name": "Bag", "type": "wearable", "description": "placeholder bag \n description" }
