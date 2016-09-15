@@ -161,16 +161,17 @@ class GameDecoderJSON extends GameDecoderBase {
       return null;
     }
     BaseGameObject object;
+    if (objectContent[Globals.PROPERTIES_KEY] == null) objectContent[Globals.PROPERTIES_KEY] = new Map();
     if (objectContent[Globals.TYPE_KEY] == null) objectContent[Globals.TYPE_KEY] = "base";
     switch(objectContent[Globals.TYPE_KEY]) {
       case "base":
-        object = new BaseGameObject(0, objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY]);
+        object = new BaseGameObject(0, objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
         break;
       case "wearable":
-        object = new WearableGameObject.noModifier(0, objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY]);
+        object = new WearableGameObject.noModifier(0, objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
         break;
       case "consumable":
-        object = new ConsumableGameObject.noModifier(0, objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY]);
+        object = new ConsumableGameObject.noModifier(0, objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
         break;
       default:
         print("wrong type of object : ${objectContent[Globals.TYPE_KEY]}, will not be parsed");
@@ -191,7 +192,7 @@ class GameDecoderJSON extends GameDecoderBase {
         print("wrong type of object : ${objectContent[Globals.TYPE_KEY]}, \"wearable\" expected, will not be parsed");
         continue;
       }
-      WearableGameObject object = new WearableGameObject.noModifier(0, objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY]);
+      WearableGameObject object = new WearableGameObject.noModifier(0, objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
       wearing.add(object);
     }
     return wearing;
@@ -211,7 +212,8 @@ class GameDecoderJSON extends GameDecoderBase {
         print("name of room not specified, will not be parsed");
         continue;
       }
-      Room room = new Room(roomContent[Globals.ID_KEY].hashCode, roomContent[Globals.NAME_KEY], roomContent[Globals.DESCRIPTION_KEY]);
+      if (roomContent[Globals.PROPERTIES_KEY] == null) roomContent[Globals.PROPERTIES_KEY] = new Map();
+      Room room = new Room(roomContent[Globals.ID_KEY].hashCode, roomContent[Globals.NAME_KEY], roomContent[Globals.DESCRIPTION_KEY], roomContent[Globals.PROPERTIES_KEY]);
       List<BaseGameObject> objects = new List();
       var objectsContent = roomContent[Globals.OBJECTS_KEY];
       if (objectsContent != null){

@@ -10,9 +10,11 @@ class Room {
 
   List<BaseGameObject> objects;
 
+  Map<String, BaseProperty> properties;
+
   Map<Direction, Room> nextRooms;
 
-  Room(this.id, this.name, this.description);
+  Room(this.id, this.name, this.description, this.properties);
 
   String getDescription() => description;
 
