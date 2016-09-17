@@ -28,6 +28,8 @@ class EventsManager {
     }
   }
 
+  Iterable<EventConsumer> get consumers => _consumers.values.fold(_consumers.values.first.toList(), (List<EventConsumer> v, List next) => v..addAll(next));
+
   bool emitEvent(Event event){
     List<EventConsumer> consumers = _consumers[event.runtimeType];
     if (consumers == null || consumers.length == 0)

@@ -4,13 +4,17 @@ class Game {
 
   static Game game;
 
-  Game._internal(){}
+  Game._internal(){
+    eventsManagerInstance = new EventsManager();
+  }
 
   factory Game(){
     if (game == null)
-      game = new Game._internal();
+    game = new Game._internal();
     return game;
   }
+
+  EventsManager eventsManagerInstance;
 
   Player player;
 
@@ -18,8 +22,10 @@ class Game {
 
   set consumers(List<EventConsumer> consumers) {
     consumers.forEach((EventConsumer ec){
-      new EventsManager().addEventListener(ec.listenTo, ec);
+      eventsManagerInstance.addEventListener(ec.listenTo, ec);
     });
   }
+
+  Iterable<EventConsumer> get consumers => eventsManagerInstance.consumers;
 
 }

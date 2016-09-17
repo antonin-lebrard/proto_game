@@ -7,7 +7,7 @@ abstract class HasValue<T> {
 
   HasValue(this._value);
 
-  Type getType() => T;
+  Type getType() => _value.runtimeType;
 
   T getValue() => _value;
 

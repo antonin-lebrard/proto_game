@@ -18,6 +18,8 @@ class CustomizableEventConsumer<E extends Event> extends EventConsumer {
   bool stopEvent;
   bool anyConditions;
 
+  String text;
+
   CustomizableEventConsumer(String listenTo, [bool stopEvent = false, bool anyConditions = false]){
     for (Type key in EventMappings.eventMappings.keys){
       if (EventMappings.eventMappings[key]['name'] == listenTo){
@@ -31,8 +33,10 @@ class CustomizableEventConsumer<E extends Event> extends EventConsumer {
 
   bool consume(Event event){
     bool conditionsMatched;
-    if (anyConditions) conditionsMatched = conditions.any((StoredCondition condition) => condition.isConditionTrue(event));
-    else conditionsMatched = conditions.every((StoredCondition condition) => condition.isConditionTrue(event));
+    if (anyConditions)
+      conditionsMatched = conditions.any((StoredCondition condition) => condition.isConditionTrue(event));
+    else
+      conditionsMatched = conditions.every((StoredCondition condition) => condition.isConditionTrue(event));
     if (conditionsMatched) {
       for (StoredOperation o in operations) {
         o.applyOperation();
