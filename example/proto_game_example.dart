@@ -8,10 +8,19 @@ import 'dart:async';
 
 import 'package:proto_game/proto_game.dart';
 
+class TestingIo extends LowLevelIo{
+  void clear() {}
+  String readLine() => "";
+  void removeChars(int nb) {}
+  void writeLine(String line) {print(line);}
+  void writeNewLine(String line) {}
+  void writeString(String string) {}
+}
+
 main() {
 
   String json = new File('example/example.json').readAsStringSync();
-  Game game = new GameDecoderJSON().readFromFormat(json);
+  Game game = new GameDecoderJSON().readFromFormat(json, new TestingIo());
 
   Room start = game.player.plateau.rooms.firstWhere((Room elem) => elem.name == "Start");
   Room test = game.player.plateau.rooms.firstWhere((Room elem) => elem.name == "Test");

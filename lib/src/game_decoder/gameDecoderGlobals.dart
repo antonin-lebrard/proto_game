@@ -27,5 +27,6 @@ class Globals {
   static const String ANY_CONDITION_KEY = 'anyCondition';
   static const String CONDITIONS_KEY = 'conditions';
   static const String APPLY_KEY = 'apply';
+  static const String TEXT_KEY = 'text';
 
 }

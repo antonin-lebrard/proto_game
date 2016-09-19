@@ -4,15 +4,17 @@ class Game {
 
   static Game game;
 
-  Game._internal(){
+  Game._internal(this.lowLevelIo){
     eventsManagerInstance = new EventsManager();
   }
 
-  factory Game(){
+  factory Game(LowLevelIo io){
     if (game == null)
-    game = new Game._internal();
+      game = new Game._internal(io);
     return game;
   }
+
+  LowLevelIo lowLevelIo;
 
   EventsManager eventsManagerInstance;
 

@@ -22,7 +22,7 @@ class Room {
 
   Map<Direction, Room> getNextRooms() => nextRooms;
 
-  bool move(Direction direction){
+  bool canMove(Direction direction){
     if (nextRooms[direction] == null)
       return false;
     return true;

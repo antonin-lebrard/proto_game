@@ -8,6 +8,15 @@ import 'package:proto_game/proto_game.dart';
 import 'package:proto_game/src/condition/condition_entryPoint.dart';
 import 'package:test/test.dart';
 
+class TestingIo extends LowLevelIo{
+  void clear() {}
+  String readLine() => "";
+  void removeChars(int nb) {}
+  void writeLine(String line) {}
+  void writeNewLine(String line) {}
+  void writeString(String string) {}
+}
+
 void main() {
 
   group("decoding", (){
@@ -21,7 +30,7 @@ void main() {
 
     setUp(() {
       String json = new File('example/example.json').readAsStringSync();
-      game = new GameDecoderJSON().readFromFormat(json);
+      game = new GameDecoderJSON().readFromFormat(json, new TestingIo());
 
       start = game.player.plateau.rooms.firstWhere((Room elem) => elem.name == "Start");
       test1 = game.player.plateau.rooms.firstWhere((Room elem) => elem.name == "Test");

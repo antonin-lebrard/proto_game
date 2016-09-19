@@ -8,7 +8,7 @@ part of proto_game.gameDecoder;
  */
 abstract class GameDecoderBase {
   String writeToFormat();
-  Game readFromFormat(String content);
+  Game readFromFormat(String content, LowLevelIo io);
 }
 
 class GameDecoderJSON extends GameDecoderBase {
@@ -17,9 +17,9 @@ class GameDecoderJSON extends GameDecoderBase {
   String writeToFormat(){return "null";}
 
   @override
-  Game readFromFormat(String content){
+  Game readFromFormat(String content, LowLevelIo io){
     Map<String, dynamic> gameJson = JSON.decode(content)["game"];
-    Game game = new Game();
+    Game game = new Game(io);
     for (String key in gameJson.keys){
       switch(key){
         case Globals.GLOBALS_KEY:
@@ -354,11 +354,16 @@ class GameDecoderJSON extends GameDecoderBase {
         consumerContent[Globals.CONDITIONS_KEY] = new List();
       if (consumerContent[Globals.CONDITIONS_KEY].length == 0)
         print("warning, event consumer without conditions, will consume each event it listens to");
-      if (consumerContent[Globals.APPLY_KEY] == null || consumerContent[Globals.APPLY_KEY].length == 0) {
-        print("no apply in event, event doing nothing, no parsing");
-        continue;
-      }
-      CustomizableEventConsumer consumer = new CustomizableEventConsumer(consumerContent[Globals.LISTEN_KEY], consumerContent[Globals.STOP_EVENT_KEY], consumerContent[Globals.ANY_CONDITION_KEY]);
+      if (consumerContent[Globals.APPLY_KEY] == null || consumerContent[Globals.APPLY_KEY].length == 0)
+        print("no apply in event, event doing nothing, maybe not a good idea");
+      if (consumerContent[Globals.TEXT_KEY] == null)
+        consumerContent[Globals.TEXT_KEY] = "";
+      CustomizableEventConsumer consumer = new CustomizableEventConsumer(
+          consumerContent[Globals.LISTEN_KEY],
+          text: consumerContent[Globals.TEXT_KEY],
+          stopEvent: consumerContent[Globals.STOP_EVENT_KEY],
+          anyConditions: consumerContent[Globals.ANY_CONDITION_KEY]
+      );
       for (String condition in consumerContent[Globals.CONDITIONS_KEY]){
         consumer.conditions.add(new StoredCondition.fromString(consumer, condition));
       }

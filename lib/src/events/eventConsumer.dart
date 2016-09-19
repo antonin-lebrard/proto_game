@@ -20,7 +20,7 @@ class CustomizableEventConsumer<E extends Event> extends EventConsumer {
 
   String text;
 
-  CustomizableEventConsumer(String listenTo, [bool stopEvent = false, bool anyConditions = false]){
+  CustomizableEventConsumer(String listenTo, {String text:"", bool stopEvent:false, bool anyConditions:false}){
     for (Type key in EventMappings.eventMappings.keys){
       if (EventMappings.eventMappings[key]['name'] == listenTo){
         this.listenTo = key;
@@ -29,6 +29,7 @@ class CustomizableEventConsumer<E extends Event> extends EventConsumer {
     }
     this.stopEvent = stopEvent;
     this.anyConditions = anyConditions;
+    this.text = text;
   }
 
   bool consume(Event event){
@@ -41,6 +42,7 @@ class CustomizableEventConsumer<E extends Event> extends EventConsumer {
       for (StoredOperation o in operations) {
         o.applyOperation();
       }
+      Game.game.lowLevelIo.writeLine(text);
       return stopEvent;
     }
     return false;

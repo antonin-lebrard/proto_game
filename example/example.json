@@ -51,7 +51,8 @@
         "apply":[
           "globals.numGl += 10",
           "globals.stringGl = 'applying event consumer effect'"
-        ]
+        ],
+        "text": "this direction is blocked"
       },
       { "listenTo": "move",
         "stopEvent": false,

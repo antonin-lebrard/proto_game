@@ -15,7 +15,9 @@ class Plateau {
   Room getCurrentRoom() => currentRoom;
 
   bool move(Direction direction) {
-    if (currentRoom.move(direction)){
+    if (currentRoom.canMove(direction)){
+      if (new EventsManager().emitEvent(new MoveEvent(currentRoom, currentRoom.getNextRooms()[direction])))
+        return false;
       currentRoom = currentRoom.getNextRooms()[direction];
       gameLoop();
       return true;
