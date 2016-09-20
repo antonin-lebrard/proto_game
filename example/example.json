@@ -32,12 +32,14 @@
           {"name": "object2", "description": "object2 \n description" }
         ],
         "direction": {
-          "south": "start"
+          "south": "start",
+          "south_east": "test2"
         }
       },
       { "id": "test2", "name": "Test2", "description": "another test room",
         "direction": {
-          "west": "start"
+          "west": "start",
+          "north_west": "test"
         }
       }
     ],

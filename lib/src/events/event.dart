@@ -3,32 +3,53 @@ part of proto_game.events;
 
 class EventMappings {
 
-  static Map<Type, Map<String, dynamic>> eventMappings = {
+  static final Map<Type, Map<String, dynamic>> eventMappings = {
+    ExamineEvent : {
+      "params": { "thing": HasDescription },
+      "name": "examine",
+      "createInstance": (HasDescription thing) => new ExamineEvent(thing),
+    },
     MoveEvent : {
       "params": { "from": Room, "to": Room },
       "name": "move",
+      "createInstance": (Room from, Room to) => new MoveEvent(from, to),
     },
     TakeEvent : {
       "params": { "object": BaseGameObject },
       "name": "take",
+      "createInstance": (BaseGameObject object) => new TakeEvent(object),
     },
     DropEvent : {
       "params": { "object": BaseGameObject },
       "name": "drop",
+      "createInstance": (BaseGameObject object) => new DropEvent(object),
     },
     WearEvent : {
       "params": { "object": WearableGameObject },
       "name": "wear",
+      "createInstance": (WearableGameObject object) => new WearEvent(object),
     },
     RemoveEvent : {
       "params": { "object": WearableGameObject },
       "name": "remove",
+      "createInstance": (WearableGameObject object) => new RemoveEvent(object),
     },
     UseEvent : {
       "params": { "object": BaseGameObject },
       "name": "use",
+      "createInstance": (BaseGameObject object) => new UseEvent(object),
     },
   };
+
+  static Function getEventCreatorFromName(String name){
+    Function eventCreator = null;
+    EventMappings.eventMappings.forEach((_, Map<String, dynamic> value){
+      if (value["name"] == name){
+        eventCreator = value["createInstance"];
+      }
+    });
+    return eventCreator;
+  }
 
 }
 
@@ -41,6 +62,13 @@ abstract class Event {
 
   _setProperties(Map<String, Object> properties) => this.properties = properties;
 
+}
+
+class ExamineEvent extends Event {
+  HasDescription thing;
+  ExamineEvent(this.thing) {
+    _setProperties({"thing":thing});
+  }
 }
 
 class MoveEvent extends Event {

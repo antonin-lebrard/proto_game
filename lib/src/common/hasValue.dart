@@ -1,4 +1,4 @@
-part of proto_game.operation;
+part of proto_game.common;
 
 
 abstract class HasValue<T> {
@@ -18,4 +18,3 @@ abstract class HasValue<T> {
   }
 
 }
-

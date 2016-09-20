@@ -1,6 +1,6 @@
 part of proto_game.room;
 
-class Room {
+class Room extends HasDescription {
 
   int id;
 

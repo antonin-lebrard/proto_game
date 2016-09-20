@@ -1,4 +1,5 @@
 library proto_game.variables;
-import 'package:proto_game/src/condition/condition_entryPoint.dart';
+
+import 'package:proto_game/src/common/common.dart';
 
 part "globalVariable.dart";

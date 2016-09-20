@@ -21,12 +21,8 @@ class Player {
   }
 
   bool move(Direction direction){
-    if (new EventsManager().emitEvent(new MoveEvent(plateau.getCurrentRoom(), plateau.getCurrentRoom().getNextRooms()[direction]))) {
-      if (plateau.move(direction)) {
-        return true;
-      }
-      return false;
-    }
+    if (plateau.move(direction))
+      return true;
     return false;
   }
 }

@@ -3,6 +3,7 @@
 
 library proto_game.base;
 
+export 'package:proto_game/src/common/common.dart';
 export 'package:proto_game/src/condition/condition_entryPoint.dart';
 export 'package:proto_game/src/events/events_entryPoint.dart';
 export 'package:proto_game/src/game/game_entryPoint.dart';

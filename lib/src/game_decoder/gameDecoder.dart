@@ -284,18 +284,26 @@ class GameDecoderJSON extends GameDecoderBase {
         direction = Direction.EAST;
         break;
       case "northwest":
+      case "north-west":
+      case "north_west":
       case "nw":
         direction = Direction.NORTH_WEST;
         break;
       case "northeast":
+      case "north-east":
+      case "north_east":
       case "ne":
         direction = Direction.NORTH_EAST;
         break;
       case "southwest":
+      case "south-west":
+      case "south_west":
       case "sw":
         direction = Direction.SOUTH_WEST;
         break;
       case "southeast":
+      case "south-east":
+      case "south_east":
       case "se":
         direction = Direction.SOUTH_EAST;
         break;

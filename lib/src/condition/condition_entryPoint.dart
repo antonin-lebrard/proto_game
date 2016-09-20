@@ -6,6 +6,5 @@ part "storedOperation.dart";
 part "storedCondition.dart";
 part "decondingHelper.dart";
 part "enumOperation.dart";
-part "operationInterface.dart";
 part "operationHelper.dart";
 

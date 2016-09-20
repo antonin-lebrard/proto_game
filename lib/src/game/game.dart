@@ -5,7 +5,7 @@ class Game {
   static Game game;
 
   Game._internal(this.lowLevelIo){
-    eventsManagerInstance = new EventsManager();
+    evtManagerInstance = new EventsManager();
   }
 
   factory Game(LowLevelIo io){
@@ -16,7 +16,7 @@ class Game {
 
   LowLevelIo lowLevelIo;
 
-  EventsManager eventsManagerInstance;
+  EventsManager evtManagerInstance;
 
   Player player;
 
@@ -24,10 +24,10 @@ class Game {
 
   set consumers(List<EventConsumer> consumers) {
     consumers.forEach((EventConsumer ec){
-      eventsManagerInstance.addEventListener(ec.listenTo, ec);
+      evtManagerInstance.addEventListener(ec.listenTo, ec);
     });
   }
 
-  Iterable<EventConsumer> get consumers => eventsManagerInstance.consumers;
+  Iterable<EventConsumer> get consumers => evtManagerInstance.consumers;
 
 }
