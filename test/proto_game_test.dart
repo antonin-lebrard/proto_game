@@ -21,23 +21,14 @@ void main() {
 
   group("decoding", (){
 
-    Game game;
-    Room start;
-    Room test1;
-    Room test2;
+    String json = new File('example/example.json').readAsStringSync();
+    Game game = new GameDecoderJSON().readFromFormat(json, new TestingIo());
 
-    List<CustomizableEventConsumer> consumers;
+    Room start = game.player.plateau.rooms.firstWhere((Room elem) => elem.name == "Start");
+    Room test1 = game.player.plateau.rooms.firstWhere((Room elem) => elem.name == "Test");
+    Room test2 = game.player.plateau.rooms.firstWhere((Room elem) => elem.name == "Test2");
 
-    setUp(() {
-      String json = new File('example/example.json').readAsStringSync();
-      game = new GameDecoderJSON().readFromFormat(json, new TestingIo());
-
-      start = game.player.plateau.rooms.firstWhere((Room elem) => elem.name == "Start");
-      test1 = game.player.plateau.rooms.firstWhere((Room elem) => elem.name == "Test");
-      test2 = game.player.plateau.rooms.firstWhere((Room elem) => elem.name == "Test2");
-
-      consumers = game.consumers.toList();
-    });
+    List<CustomizableEventConsumer> consumers = game.consumers.toList();
 
     test('decoding rooms', () {
       expect(start != null, isTrue);
@@ -54,7 +45,7 @@ void main() {
     });
     test('decoding globals', (){
       expect(game.globals.length == 3, isTrue);
-      expect(game.globals.firstWhere((GlobalVariable g) => g.name == "numGl").getType() == num, isTrue);
+      expect(game.globals.firstWhere((GlobalVariable g) => g.name == "numGl").getType() == int, isTrue);
       expect(game.globals.firstWhere((GlobalVariable g) => g.name == "numGl").getValue() == 0, isTrue);
       expect(game.globals.firstWhere((GlobalVariable g) => g.name == "stringGl").getType() == String, isTrue);
       expect(game.globals.firstWhere((GlobalVariable g) => g.name == "stringGl").getValue() == "test", isTrue);
