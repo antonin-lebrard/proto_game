@@ -366,6 +366,8 @@ class GameDecoderJSON extends GameDecoderBase {
         print("no apply in event, event doing nothing, maybe not a good idea");
       if (consumerContent[Globals.TEXT_KEY] == null)
         consumerContent[Globals.TEXT_KEY] = "";
+      if (consumerContent[Globals.TEXT_KEY] is List)
+        consumerContent[Globals.TEXT_KEY] = consumerContent[Globals.TEXT_KEY].join("\n");
       CustomizableEventConsumer consumer = new CustomizableEventConsumer(
           consumerContent[Globals.LISTEN_KEY],
           text: consumerContent[Globals.TEXT_KEY],
