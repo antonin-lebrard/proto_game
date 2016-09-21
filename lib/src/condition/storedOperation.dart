@@ -5,12 +5,17 @@ class StoredOperation {
   List<HasValue> variables = new List();
   List<Operation> operations = new List();
 
+  bool isFunction = false;
+
+  Function toExecute;
+
   StoredOperation.fromString(String s){
     DecodingHelper.decompose(s, _decodeOperationPart);
   }
 
   void applyOperation() {
-    OperationHelper.applyOperation(variables.toList(), operations.toList());
+    if (isFunction) toExecute();
+    else OperationHelper.applyOperation(variables.toList(), operations.toList());
   }
 
   _decodeOperationPart(String s){
@@ -18,12 +23,20 @@ class StoredOperation {
     if (DecodingHelper.isOperator(s[0])){
       Operation o = DecodingHelper.decodeOperation(s);
       if (o != null) operations.add(o);
-      else print("problem decoding operator");
+      else print("problem decoding operator $s");
+    }
+    else if (DecodingHelper.isFunction(s)){
+      Function f = _decodeFunction(s);
+      if (f != null) {
+        isFunction = true;
+        toExecute = f;
+      }
+      else print("problem decoding function $s");
     }
     else {
       HasValue v = DecodingHelper.decodeTempVariable(s, _decodeVariable);
       if (v != null) variables.add(v);
-      else print("problem decoding variable");
+      else print("problem decoding variable $s");
     }
   }
 
@@ -43,6 +56,28 @@ class StoredOperation {
             return Game.game.player.properties[key];
           }
         }
+      }
+    }
+    return null;
+  }
+
+  Function _decodeFunction(String s){
+    List<String> varPart = s.split('.');
+    if (varPart[0] == "player"){
+      if (varPart[1].startsWith("addObject(")){
+        return DecodingHelper.generateObjectAction(varPart[1], "take");
+      }
+      else if (varPart[1].startsWith("dropObject(")){
+        return DecodingHelper.generateObjectAction(varPart[1], "drop");
+      }
+      else if (varPart[1].startsWith("wearObject(")){
+        return DecodingHelper.generateObjectAction(varPart[1], "wear");
+      }
+      else if (varPart[1].startsWith("removeObject(")){
+        return DecodingHelper.generateObjectAction(varPart[1], "remove");
+      }
+      else if (varPart[1].startsWith("useObject(")){
+        return DecodingHelper.generateObjectAction(varPart[1], "use");
       }
     }
     return null;

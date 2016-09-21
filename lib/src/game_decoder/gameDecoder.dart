@@ -34,7 +34,8 @@ class GameDecoderJSON extends GameDecoderBase {
         case Globals.EVENTS_KEY:
           game.consumers = parseConsumers(gameJson[key]);
           break;
-        case Globals.CURRENT_ROOM_KEY:
+        case Globals.OBJECTS_KEY:
+          game.objectStorage = parseObjects(gameJson[key]);
           break;
         default:
           print("wrong key found in json content : $key, will not be parsed");
@@ -383,6 +384,17 @@ class GameDecoderJSON extends GameDecoderBase {
       consumers.add(consumer);
     }
     return consumers;
+  }
+
+  SplayTreeMap<num, BaseGameObject> parseObjects(var objectsContent){
+    if (objectsContent is Map) objectsContent = new List()..add(objectsContent);
+    SplayTreeMap<num, BaseGameObject> map = new SplayTreeMap<num, BaseGameObject>();
+    for (Map objectContent in objectsContent){
+      BaseGameObject object = parseObject(objectContent);
+      if (object != null)
+        map[object.id] = object;
+    }
+    return map;
   }
 
 }

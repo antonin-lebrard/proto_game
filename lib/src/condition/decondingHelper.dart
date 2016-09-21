@@ -22,6 +22,7 @@ class ExpectedEventVariable extends HasValue {
 
 class DecodingHelper {
   static String _allOperators = "+-/*%=><?:";
+  static String _functionDelimiters = "()";
   static bool _stringMode = false;
   static bool _fromQuote = false;
   static bool get isStringMode => _stringMode;
@@ -41,6 +42,10 @@ class DecodingHelper {
   }
   static bool isOperator(String letter){
     return _allOperators.contains(letter);
+  }
+
+  static bool isFunction(String s){
+    return _functionDelimiters.split('').every((String letter) => s.contains(letter));
   }
 
   static void decompose(String s, Function onOperationPart){
@@ -112,4 +117,24 @@ class DecodingHelper {
     }
     return null;
   }
+
+  static String extractFunctionParam(String s){
+    if (!isFunction(s)){
+      print("problem extracting param from $s");
+      return null;
+    }
+    return s.substring(s.indexOf("(")+1, s.indexOf(")"));
+  }
+
+  static Function generateObjectAction(String functionCall, String action){
+    String objectId = DecodingHelper.extractFunctionParam(functionCall);
+    if (objectId == null) return null;
+    BaseGameObject object = Game.game.getObjectById(objectId);
+    if (object == null) {
+      print("$objectId id not found");
+      return null;
+    }
+    return () => object.executeAction(action);
+  }
+
 }

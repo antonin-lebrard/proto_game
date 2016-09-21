@@ -22,6 +22,10 @@ class Game {
 
   List<GlobalVariable> globals;
 
+  SplayTreeMap<num, BaseGameObject> objectStorage;
+
+  BaseGameObject getObjectById(String name) => objectStorage[name.hashCode];
+
   set consumers(List<EventConsumer> consumers) {
     consumers.forEach((EventConsumer ec){
       evtManagerInstance.addEventListener(ec.listenTo, ec);
