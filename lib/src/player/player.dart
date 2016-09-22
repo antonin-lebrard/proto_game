@@ -21,8 +21,6 @@ class Player {
   }
 
   bool move(Direction direction){
-    if (plateau.move(direction))
-      return true;
-    return false;
+    return plateau.move(direction);
   }
 }
