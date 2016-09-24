@@ -9,6 +9,8 @@ class Globals {
   static const String TYPE_KEY = 'type';
   static const String DESCRIPTION_KEY = 'description';
 
+  static const String TITLE_KEY = 'title';
+  static const String VERSION_KEY = 'version';
   static const String GLOBALS_KEY = 'globals';
   static const String PLAYER_KEY = 'player';
   static const String PLATEAU_KEY = 'rooms';

@@ -64,14 +64,14 @@ void main() {
       expect(game.player.inventory.length == 1, isTrue);
       expect(game.player.inventory.first.name == "Bag", isTrue);
       expect(game.player.inventory.first.runtimeType == WearableGameObject, isTrue);
-      expect(game.player.inventory.first.description == "placeholder bag \n description", isTrue);
+      expect(game.player.inventory.first.description == "placeholder bag \ndescription", isTrue);
       expect(start.objects.length == 1, isTrue);
       expect(start.objects.first.name == "object1", isTrue);
-      expect(start.objects.first.description == "object1 \n description", isTrue);
+      expect(start.objects.first.description == "object1 \ndescription", isTrue);
       expect(start.objects.first.runtimeType == ConsumableGameObject, isTrue);
       expect(test1.objects.length == 1, isTrue);
       expect(test1.objects.first.name == "object2", isTrue);
-      expect(test1.objects.first.description == "object2 \n description", isTrue);
+      expect(test1.objects.first.description == "object2 \ndescription", isTrue);
       expect(test1.objects.first.runtimeType == BaseGameObject, isTrue);
     });
     test('decoding events', (){

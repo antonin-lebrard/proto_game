@@ -20,6 +20,7 @@ class GameDecoderJSON extends GameDecoderBase {
   Game readFromFormat(String content, LowLevelIo io){
     Map<String, dynamic> gameJson = JSON.decode(content)["game"];
     Game game = new Game(io);
+    game.objectStorage = parseObjects(gameJson[Globals.OBJECTS_KEY]);
     for (String key in gameJson.keys){
       switch(key){
         case Globals.GLOBALS_KEY:
@@ -34,8 +35,10 @@ class GameDecoderJSON extends GameDecoderBase {
         case Globals.EVENTS_KEY:
           game.consumers = parseConsumers(gameJson[key]);
           break;
+        case Globals.TITLE_KEY:
+        case Globals.VERSION_KEY:
+        case Globals.CURRENT_ROOM_KEY:
         case Globals.OBJECTS_KEY:
-          game.objectStorage = parseObjects(gameJson[key]);
           break;
         default:
           print("wrong key found in json content : $key, will not be parsed");
@@ -99,7 +102,7 @@ class GameDecoderJSON extends GameDecoderBase {
           player.inventory = parseInventory(playerContent[key]);
           break;
         case Globals.WEARING_KEY:
-          player.wearing = parseWearing(playerContent[key]);
+          player.wearing = parseInventory(playerContent[key]);
           break;
       }
     }
@@ -143,10 +146,10 @@ class GameDecoderJSON extends GameDecoderBase {
   }
 
   static List<BaseGameObject> parseInventory(var inventoryContent){
-    if (inventoryContent is Map) inventoryContent = new List()..add(inventoryContent);
+    if (inventoryContent is String) inventoryContent = new List()..add(inventoryContent);
     List<BaseGameObject> inventory = new List();
-    for (Map objectContent in inventoryContent){
-      BaseGameObject object = parseObject(objectContent);
+    for (String objectName in inventoryContent){
+      BaseGameObject object = Game.game.getObjectByName(objectName);
       if (object != null) inventory.add(object);
     }
     return inventory;
@@ -166,13 +169,13 @@ class GameDecoderJSON extends GameDecoderBase {
     if (objectContent[Globals.TYPE_KEY] == null) objectContent[Globals.TYPE_KEY] = "base";
     switch(objectContent[Globals.TYPE_KEY]) {
       case "base":
-        object = new BaseGameObject(0, objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
+        object = new BaseGameObject(objectContent[Globals.NAME_KEY].hashCode, objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
         break;
       case "wearable":
-        object = new WearableGameObject.noModifier(0, objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
+        object = new WearableGameObject.noModifier(objectContent[Globals.NAME_KEY].hashCode, objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
         break;
       case "consumable":
-        object = new ConsumableGameObject.noModifier(0, objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
+        object = new ConsumableGameObject.noModifier(objectContent[Globals.NAME_KEY].hashCode, objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
         break;
       default:
         print("wrong type of object : ${objectContent[Globals.TYPE_KEY]}, will not be parsed");
@@ -181,7 +184,7 @@ class GameDecoderJSON extends GameDecoderBase {
     return object;
   }
 
-  static List<WearableGameObject> parseWearing(var wearingContent){
+  /*static List<WearableGameObject> parseWearing(var wearingContent){
     if (wearingContent is Map) wearingContent = new List()..add(wearingContent);
     List<WearableGameObject> wearing = new List();
     for (Map objectContent in wearingContent){
@@ -197,7 +200,7 @@ class GameDecoderJSON extends GameDecoderBase {
       wearing.add(object);
     }
     return wearing;
-  }
+  }*/
 
   static Plateau parsePlateau(var plateauContent, var currentRoomId){
     if (plateauContent is Map) plateauContent = new List()..add(plateauContent);
@@ -218,9 +221,9 @@ class GameDecoderJSON extends GameDecoderBase {
       List<BaseGameObject> objects = new List();
       var objectsContent = roomContent[Globals.OBJECTS_KEY];
       if (objectsContent != null){
-        if (objectsContent is Map) objectsContent = new List()..add(objectsContent);
-        for (Map objectContent in objectsContent){
-          BaseGameObject object = parseObject(objectContent);
+        if (objectsContent is String) objectsContent = new List()..add(objectsContent);
+        for (String objectName in objectsContent){
+          BaseGameObject object = Game.game.getObjectByName(objectName);
           if (object != null) objects.add(object);
         }
       }
@@ -386,7 +389,8 @@ class GameDecoderJSON extends GameDecoderBase {
     return consumers;
   }
 
-  SplayTreeMap<num, BaseGameObject> parseObjects(var objectsContent){
+  static SplayTreeMap<num, BaseGameObject> parseObjects(var objectsContent){
+    if (objectsContent == null) objectsContent = new List();
     if (objectsContent is Map) objectsContent = new List()..add(objectsContent);
     SplayTreeMap<num, BaseGameObject> map = new SplayTreeMap<num, BaseGameObject>();
     for (Map objectContent in objectsContent){

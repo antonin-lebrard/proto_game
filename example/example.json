@@ -7,6 +7,11 @@
       {"name": "stringGl", "type": "string", "value": "test" },
       {"name": "boolGl", "type": "bool", "value": true }
     ],
+    "objects": [
+      {"name": "Bag", "type": "wearable", "description": "placeholder bag \ndescription" },
+      {"name": "object1", "type": "consumable", "description": "object1 \ndescription" },
+      {"name": "object2", "description": "object2 \ndescription" }
+    ],
     "player": {
       "name": "Sicile",
       "properties": [
@@ -14,13 +19,13 @@
         {"name": "secondPropertyPlayer", "type": "num", "value": 100 }
       ],
       "inventory": [
-        {"name": "Bag", "type": "wearable", "description": "placeholder bag \n description" }
+        "Bag"
       ]
     },
     "rooms": [
       { "id": "start", "name": "Start", "description": "the starting room",
         "objects": [
-          {"name": "object1", "type": "consumable", "description": "object1 \n description" }
+          "object1"
         ],
         "direction": {
           "north": "test",
@@ -29,7 +34,7 @@
       },
       { "id": "test", "name": "Test", "description": "other room test",
         "objects": [
-          {"name": "object2", "description": "object2 \n description" }
+          "object2"
         ],
         "direction": {
           "south": "start",
