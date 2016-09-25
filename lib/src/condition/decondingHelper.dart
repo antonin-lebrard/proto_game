@@ -107,7 +107,7 @@ class DecodingHelper {
   }
 
   static ExpectedEventVariable decodeExpectedVariable(List<String> varPart, Type eventType){
-    if (varPart[0] == "param"){
+    if (eventType != null && varPart[0] == "param"){
       for (String key in EventMappings.eventMappings[eventType]['params'].keys){
         Type value = EventMappings.eventMappings[eventType]['params'][key];
         if (key == varPart[1]){

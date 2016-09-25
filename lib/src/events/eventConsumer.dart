@@ -42,7 +42,8 @@ class CustomizableEventConsumer<E extends Event> extends EventConsumer {
       for (StoredOperation o in operations) {
         o.applyOperation();
       }
-      Game.game.lowLevelIo.writeLine(text);
+      if (text != "")
+        Game.game.lowLevelIo.writeLine(text);
       return stopEvent;
     }
     return false;

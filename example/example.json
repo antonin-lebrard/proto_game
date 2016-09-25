@@ -55,7 +55,7 @@
           "param.from == rooms.start",
           "param.to == rooms.test"
         ],
-        "apply":[
+        "apply": [
           "globals.numGl += 10",
           "globals.stringGl = 'applying event consumer effect'"
         ],
@@ -66,10 +66,32 @@
         "conditions": [
           "param.from == rooms.test"
         ],
-        "apply":[
+        "apply": [
           "globals.numGl -= globals.boolGl ? 0 : 100",
           "globals.stringGl += ' add this bit'",
           "globals.boolGl = false"
+        ]
+      }
+    ],
+    "npc": [
+      {
+        "name": "npc1",
+        "properties": [
+          {"name": "npcProp1", "type": "num", "value": 0 },
+          {"name": "npcProp2", "type": "string", "value": "nothing" }
+        ],
+        "inventory": [ "Bag" ],
+        "interactions": [
+          {
+            "actionName": "talk",
+            "conditions": [ "npcs.npc1.properties.npcProp1 == 0" ], "apply": [ "npcs.npc1.properties.npcProp1 += 1" ],
+            "text": "Hello You !"
+          },
+          {
+            "actionName": "talk",
+            "conditions": [ "npcs.npc1.properties.npcProp1 == 1" ],
+            "text": "Welcome !"
+          }
         ]
       }
     ],

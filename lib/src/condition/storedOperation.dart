@@ -42,21 +42,40 @@ class StoredOperation {
 
   HasValue _decodeVariable(String s) {
     List<String> varPart = s.split('.');
-    if (varPart[0] == "global" || varPart[0] == "globals") {
-      for (GlobalVariable g in Game.game.globals) {
-        if (g.name == varPart[1]) {
-          return g;
-        }
-      }
-    }
-    else if (varPart[0] == "player") {
-      if (varPart[1] == "properties") {
-        for (String key in Game.game.player.properties.keys) {
-          if (varPart[2] == key){
-            return Game.game.player.properties[key];
+    try {
+      if (varPart[0] == "global" || varPart[0] == "globals") {
+        for (GlobalVariable g in Game.game.globals) {
+          if (g.name == varPart[1]) {
+            return g;
           }
         }
       }
+      else if (varPart[0] == "player") {
+        if (varPart[1] == "properties") {
+          for (String key in Game.game.player.properties.keys) {
+            if (varPart[2] == key) {
+              return Game.game.player.properties[key];
+            }
+          }
+        }
+      }
+      else if (varPart[0] == "npcs") {
+        for (Npc npc in Game.game.npcStorage) {
+          if (npc.name == varPart[1]) {
+            if (varPart[2] == "properties"){
+              for (String key in npc.properties.keys){
+                if (varPart[3] == key){
+                  return npc.properties[key];
+                }
+              }
+              break;
+            }
+            break;
+          }
+        }
+      }
+    } on IndexError {
+      return null;
     }
     return null;
   }

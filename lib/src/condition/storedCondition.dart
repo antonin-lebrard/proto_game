@@ -8,8 +8,7 @@ class StoredCondition {
   List<HasValue> variables = new List();
   List<Operation> operations = new List();
 
-  StoredCondition.fromString(EventConsumer parent, String condition) {
-    this.eventType = parent.listenTo;
+  StoredCondition.fromString(this.eventType, String condition) {
     DecodingHelper.decompose(condition, _decodeOperationPart);
   }
 
@@ -26,12 +25,12 @@ class StoredCondition {
     if (DecodingHelper.isOperator(s[0])){
       Operation o = DecodingHelper.decodeOperation(s);
       if (o != null) operations.add(o);
-      else print("problem decoding operator");
+      else print("problem decoding operator $s");
     }
     else {
       HasValue v = DecodingHelper.decodeTempVariable(s, _decodeVariable);
       if (v != null) variables.add(v);
-      else print("problem decoding variable");
+      else print("problem decoding variable $s");
     }
   }
 
@@ -41,28 +40,47 @@ class StoredCondition {
     HasValue o = DecodingHelper.decodeExpectedVariable(varPart, eventType);
     if (o != null) return o;
 
-    if (varPart[0] == "global" || varPart[0] == "globals") {
-      for (GlobalVariable g in Game.game.globals) {
-        if (g.name == varPart[1]) {
-          return g;
-        }
-      }
-    }
-    else if (varPart[0] == "player") {
-      if (varPart[1] == "properties") {
-        for (String key in Game.game.player.properties.keys) {
-          if (varPart[2] == key){
-            return Game.game.player.properties[key];
+    try {
+      if (varPart[0] == "global" || varPart[0] == "globals") {
+        for (GlobalVariable g in Game.game.globals) {
+          if (g.name == varPart[1]) {
+            return g;
           }
         }
       }
-    }
-    else if (varPart[0] == "rooms") {
-      for (Room room in Game.game.player.plateau.rooms) {
-        if (room.id == varPart[1].hashCode) {
-          return new TempVariable(room);
+      else if (varPart[0] == "player") {
+        if (varPart[1] == "properties") {
+          for (String key in Game.game.player.properties.keys) {
+            if (varPart[2] == key) {
+              return Game.game.player.properties[key];
+            }
+          }
         }
       }
+      else if (varPart[0] == "rooms") {
+        for (Room room in Game.game.player.plateau.rooms) {
+          if (room.id == varPart[1].hashCode) {
+            return new TempVariable(room);
+          }
+        }
+      }
+      else if (varPart[0] == "npcs") {
+        for (Npc npc in Game.game.npcStorage) {
+          if (npc.name == varPart[1]) {
+            if (varPart[2] == "properties"){
+              for (String key in npc.properties.keys){
+                if (varPart[3] == key){
+                  return npc.properties[key];
+                }
+              }
+              break;
+            }
+            break;
+          }
+        }
+      }
+    } on IndexError {
+      return null;
     }
     return null;
   }

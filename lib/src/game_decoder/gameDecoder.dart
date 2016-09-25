@@ -13,14 +13,15 @@ abstract class GameDecoderBase {
 
 class GameDecoderJSON extends GameDecoderBase {
 
-  @override
+  static List<Function> _toExecuteAtTheEnd = new List();
+
   String writeToFormat(){return "null";}
 
-  @override
   Game readFromFormat(String content, LowLevelIo io){
     Map<String, dynamic> gameJson = JSON.decode(content)["game"];
     Game game = new Game(io);
     game.objectStorage = parseObjects(gameJson[Globals.OBJECTS_KEY]);
+    game.npcStorage = parseNpcs(gameJson[Globals.NPC_KEY]);
     for (String key in gameJson.keys){
       switch(key){
         case Globals.GLOBALS_KEY:
@@ -39,12 +40,17 @@ class GameDecoderJSON extends GameDecoderBase {
         case Globals.VERSION_KEY:
         case Globals.CURRENT_ROOM_KEY:
         case Globals.OBJECTS_KEY:
+        case Globals.NPC_KEY:
           break;
         default:
           print("wrong key found in json content : $key, will not be parsed");
           break;
       }
     }
+    for (Function f in _toExecuteAtTheEnd){
+      f();
+    }
+    _toExecuteAtTheEnd.clear();
     return game;
   }
 
@@ -110,6 +116,7 @@ class GameDecoderJSON extends GameDecoderBase {
   }
 
   static Map<String, BaseProperty> parseProperties(var propertiesContent){
+    if (propertiesContent == null) propertiesContent = new List();
     if (propertiesContent is Map) propertiesContent = new List()..add(propertiesContent);
     Map<String, BaseProperty> propertiesMap = new Map();
     for (Map propertyContent in propertiesContent){
@@ -146,6 +153,7 @@ class GameDecoderJSON extends GameDecoderBase {
   }
 
   static List<BaseGameObject> parseInventory(var inventoryContent){
+    if (inventoryContent == null) inventoryContent = new List();
     if (inventoryContent is String) inventoryContent = new List()..add(inventoryContent);
     List<BaseGameObject> inventory = new List();
     for (String objectName in inventoryContent){
@@ -216,7 +224,8 @@ class GameDecoderJSON extends GameDecoderBase {
         print("name of room not specified, will not be parsed");
         continue;
       }
-      if (roomContent[Globals.PROPERTIES_KEY] == null) roomContent[Globals.PROPERTIES_KEY] = new Map();
+      if (roomContent[Globals.PROPERTIES_KEY] == null) roomContent[Globals.PROPERTIES_KEY] = new List();
+      roomContent[Globals.PROPERTIES_KEY] = parseProperties(roomContent[Globals.PROPERTIES_KEY]);
       Room room = new Room(roomContent[Globals.ID_KEY].hashCode, roomContent[Globals.NAME_KEY], roomContent[Globals.DESCRIPTION_KEY], roomContent[Globals.PROPERTIES_KEY]);
       List<BaseGameObject> objects = new List();
       var objectsContent = roomContent[Globals.OBJECTS_KEY];
@@ -379,7 +388,7 @@ class GameDecoderJSON extends GameDecoderBase {
           anyConditions: consumerContent[Globals.ANY_CONDITION_KEY]
       );
       for (String condition in consumerContent[Globals.CONDITIONS_KEY]){
-        consumer.conditions.add(new StoredCondition.fromString(consumer, condition));
+        consumer.conditions.add(new StoredCondition.fromString(consumer.listenTo, condition));
       }
       for (String operation in consumerContent[Globals.APPLY_KEY]){
         consumer.operations.add(new StoredOperation.fromString(operation));
@@ -399,6 +408,78 @@ class GameDecoderJSON extends GameDecoderBase {
         map[object.id] = object;
     }
     return map;
+  }
+
+  static List<Npc> parseNpcs(var npcsContent){
+    if (npcsContent == null) npcsContent = new List();
+    if (npcsContent is Map) npcsContent = new List()..add(npcsContent);
+    List<Npc> npcs = new List();
+    for (Map npcContent in npcsContent){
+      Npc npc = parseNpc(npcContent);
+      if (npc != null)
+        npcs.add(npc);
+    }
+    return npcs;
+  }
+
+  static Npc parseNpc(Map npcContent){
+    if (npcContent[Globals.NAME_KEY] == null){
+      print("no name for this npc, will not be parsed");
+      return null;
+    }
+    Npc npc = new Npc();
+    npc.name = npcContent[Globals.NAME_KEY];
+    if (npcContent[Globals.PROPERTIES_KEY] == null) npcContent[Globals.PROPERTIES_KEY] = new List();
+    npc.properties = parseProperties(npcContent[Globals.PROPERTIES_KEY]);
+    if (npcContent[Globals.INVENTORY_KEY] == null) npcContent[Globals.INVENTORY_KEY] = new List();
+    npc.inventory = parseInventory(npcContent[Globals.INVENTORY_KEY]);
+    if (npcContent[Globals.WEARING_KEY] == null) npcContent[Globals.WEARING_KEY] = new List();
+    npc.wearing = parseInventory(npcContent[Globals.WEARING_KEY]);
+    if (npcContent[Globals.INTERACTIONS_KEY] == null) {
+      npcContent[Globals.INTERACTIONS_KEY] = new List();
+      print("no interactions with npc ${npcContent[Globals.NAME_KEY]}, possible mistake");
+    }
+    List<NpcInteraction> interactions = new List();
+    for (Map interactionContent in npcContent[Globals.INTERACTIONS_KEY]){
+      NpcInteraction interaction = parseInteraction(interactionContent);
+      if (interaction != null)
+        interactions.add(interaction);
+    }
+    npc.interactions = interactions;
+    return npc;
+  }
+
+  static NpcInteraction parseInteraction(Map interactionContent){
+    if (interactionContent[Globals.ACTION_NAME_KEY] == null){
+      print("interaction without an actionName, will not be parsed");
+      return null;
+    }
+    if (interactionContent[Globals.ANY_CONDITION_KEY] == null)
+      interactionContent[Globals.ANY_CONDITION_KEY] = false;
+    if (interactionContent[Globals.CONDITIONS_KEY] == null)
+      interactionContent[Globals.CONDITIONS_KEY] = new List();
+    if (interactionContent[Globals.CONDITIONS_KEY].length == 0)
+      print("warning, event consumer without conditions, will consume each event it listens to");
+    if (interactionContent[Globals.APPLY_KEY] == null)
+      interactionContent[Globals.APPLY_KEY] = new List();
+    if (interactionContent[Globals.TEXT_KEY] == null)
+      interactionContent[Globals.TEXT_KEY] = "";
+    if (interactionContent[Globals.TEXT_KEY] is List)
+      interactionContent[Globals.TEXT_KEY] = interactionContent[Globals.TEXT_KEY].join("\n");
+    NpcInteraction interaction = new NpcInteraction(
+        interactionContent[Globals.ACTION_NAME_KEY],
+        anyConditions: interactionContent[Globals.ANY_CONDITION_KEY],
+        text: interactionContent[Globals.TEXT_KEY],
+    );
+    _toExecuteAtTheEnd.add((){
+      for (String condition in interactionContent[Globals.CONDITIONS_KEY]){
+        interaction.conditions.add(new StoredCondition.fromString(null, condition));
+      }
+      for (String operation in interactionContent[Globals.APPLY_KEY]){
+        interaction.operations.add(new StoredOperation.fromString(operation));
+      }
+    });
+    return interaction;
   }
 
 }

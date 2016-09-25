@@ -24,6 +24,8 @@ class Game {
 
   SplayTreeMap<num, BaseGameObject> objectStorage;
 
+  List<Npc> npcStorage;
+
   BaseGameObject getObjectByName(String name) => objectStorage[name.hashCode];
 
   set consumers(List<EventConsumer> consumers) {
