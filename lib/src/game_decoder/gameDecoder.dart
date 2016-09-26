@@ -55,21 +55,11 @@ class GameDecoderJSON extends GameDecoderBase {
   }
 
   static List<GlobalVariable> parseGlobals(var globalsContent){
-    if (globalsContent is Map) globalsContent = new List()..add(globalsContent);
+    globalsContent = GameDecoderHelper.toListSupportingMap(globalsContent);
     List<GlobalVariable> globals = new List();
     for (Map globalContent in globalsContent){
-      if (globalContent[Globals.NAME_KEY] == null) {
-        print("name of global not specified, will not be parsed");
+      if (!GameDecoderHelper.isMandatoryKeysPresent(globalContent, [Globals.NAME_KEY, Globals.VALUE_KEY, Globals.TYPE_KEY]))
         continue;
-      }
-      if (globalContent[Globals.VALUE_KEY] == null) {
-        print("value of global not specified, will not be parsed");
-        continue;
-      }
-      if (globalContent[Globals.TYPE_KEY] == null) {
-        print("type of global not specified, will not be parsed");
-        continue;
-      }
       GlobalVariable global;
       switch (globalContent[Globals.TYPE_KEY].toLowerCase()){
         case "num":
@@ -116,22 +106,11 @@ class GameDecoderJSON extends GameDecoderBase {
   }
 
   static Map<String, BaseProperty> parseProperties(var propertiesContent){
-    if (propertiesContent == null) propertiesContent = new List();
-    if (propertiesContent is Map) propertiesContent = new List()..add(propertiesContent);
+    propertiesContent = GameDecoderHelper.toListSupportingMap(propertiesContent);
     Map<String, BaseProperty> propertiesMap = new Map();
     for (Map propertyContent in propertiesContent){
-      if (propertyContent[Globals.NAME_KEY] == null){
-        print("name of property not specified, will not be parsed");
+      if (!GameDecoderHelper.isMandatoryKeysPresent(propertyContent, [Globals.NAME_KEY, Globals.VALUE_KEY, Globals.TYPE_KEY]))
         continue;
-      }
-      if (propertyContent[Globals.TYPE_KEY] == null){
-        print("type of property not specified, will not be parsed");
-        continue;
-      }
-      if (propertyContent[Globals.VALUE_KEY] == null){
-        print("value of property not specified, will not be parsed");
-        continue;
-      }
       BaseProperty property;
       switch (propertyContent[Globals.TYPE_KEY]){
         case "num":
@@ -153,8 +132,7 @@ class GameDecoderJSON extends GameDecoderBase {
   }
 
   static List<BaseGameObject> parseInventory(var inventoryContent){
-    if (inventoryContent == null) inventoryContent = new List();
-    if (inventoryContent is String) inventoryContent = new List()..add(inventoryContent);
+    inventoryContent = GameDecoderHelper.toListSupportingString(inventoryContent);
     List<BaseGameObject> inventory = new List();
     for (String objectName in inventoryContent){
       BaseGameObject object = Game.game.getObjectByName(objectName);
@@ -168,12 +146,12 @@ class GameDecoderJSON extends GameDecoderBase {
       print("object is not formated correctly, will not be parsed. (Content not parsed : $objectContent)");
       return null;
     }
-    if (objectContent[Globals.NAME_KEY] == null){
-      print("name of object not specified, will not be parsed");
+    if (!GameDecoderHelper.isMandatoryKeyPresent(objectContent, Globals.NAME_KEY))
       return null;
-    }
     BaseGameObject object;
-    if (objectContent[Globals.PROPERTIES_KEY] == null) objectContent[Globals.PROPERTIES_KEY] = new Map();
+    // TODO : wrong !!
+    objectContent[Globals.PROPERTIES_KEY] = GameDecoderHelper.toListSupportingMap(objectContent[Globals.PROPERTIES_KEY]);
+    objectContent[Globals.PROPERTIES_KEY] = parseProperties(objectContent[Globals.PROPERTIES_KEY]);
     if (objectContent[Globals.TYPE_KEY] == null) objectContent[Globals.TYPE_KEY] = "base";
     switch(objectContent[Globals.TYPE_KEY]) {
       case "base":
@@ -192,39 +170,15 @@ class GameDecoderJSON extends GameDecoderBase {
     return object;
   }
 
-  /*static List<WearableGameObject> parseWearing(var wearingContent){
-    if (wearingContent is Map) wearingContent = new List()..add(wearingContent);
-    List<WearableGameObject> wearing = new List();
-    for (Map objectContent in wearingContent){
-      if (objectContent[Globals.NAME_KEY] == null){
-        print("name of object not specified, will not be parsed");
-        continue;
-      }
-      if (objectContent[Globals.TYPE_KEY] != "wearable") {
-        print("wrong type of object : ${objectContent[Globals.TYPE_KEY]}, \"wearable\" expected, will not be parsed");
-        continue;
-      }
-      WearableGameObject object = new WearableGameObject.noModifier(0, objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
-      wearing.add(object);
-    }
-    return wearing;
-  }*/
-
   static Plateau parsePlateau(var plateauContent, var currentRoomId){
-    if (plateauContent is Map) plateauContent = new List()..add(plateauContent);
+    plateauContent = GameDecoderHelper.toListSupportingMap(plateauContent);
     Plateau plateau;
     List<Room> rooms = new List();
     Map<Room, Map<Direction, num>> roomsLinksMap = new Map();
     for (Map roomContent in plateauContent) {
-      if (roomContent[Globals.ID_KEY] == null) {
-        print("id of room not specified, will not be parsed");
+      if (!GameDecoderHelper.isMandatoryKeysPresent(roomContent, [Globals.ID_KEY, Globals.NAME_KEY]))
         continue;
-      }
-      if (roomContent[Globals.NAME_KEY] == null) {
-        print("name of room not specified, will not be parsed");
-        continue;
-      }
-      if (roomContent[Globals.PROPERTIES_KEY] == null) roomContent[Globals.PROPERTIES_KEY] = new List();
+      roomContent[Globals.PROPERTIES_KEY] = GameDecoderHelper.toListSupportingMap(roomContent[Globals.PROPERTIES_KEY]);
       roomContent[Globals.PROPERTIES_KEY] = parseProperties(roomContent[Globals.PROPERTIES_KEY]);
       Room room = new Room(roomContent[Globals.ID_KEY].hashCode, roomContent[Globals.NAME_KEY], roomContent[Globals.DESCRIPTION_KEY], roomContent[Globals.PROPERTIES_KEY]);
       List<BaseGameObject> objects = new List();
@@ -241,7 +195,7 @@ class GameDecoderJSON extends GameDecoderBase {
       var nextRoomsContent = roomContent[Globals.DIRECTION_KEY];
       if (nextRoomsContent != null) {
         if (!(nextRoomsContent is Map))
-          print("direction not correctly formated, expecting Map definition {}");
+          print("directions not correctly formated, expecting Map definition {}");
         else {
           Map<Direction, num> tempDirections = new Map();
           for (String key in nextRoomsContent.keys) {
@@ -360,27 +314,20 @@ class GameDecoderJSON extends GameDecoderBase {
   }
 
   static List<EventConsumer> parseConsumers(var consumersContent){
-    if (consumersContent is Map) consumersContent = new List()..add(consumersContent);
+    consumersContent = GameDecoderHelper.toListSupportingMap(consumersContent);
     List<EventConsumer> consumers = new List();
     for (Map consumerContent in consumersContent){
-      if (consumerContent[Globals.LISTEN_KEY] == null){
-        print("listenTo key not specified, will not be parsed");
+      if (!GameDecoderHelper.isMandatoryKeyPresent(consumerContent, Globals.LISTEN_KEY))
         continue;
-      }
-      if (consumerContent[Globals.STOP_EVENT_KEY] == null)
-        consumerContent[Globals.STOP_EVENT_KEY] = false;
-      if (consumerContent[Globals.ANY_CONDITION_KEY] == null)
-        consumerContent[Globals.ANY_CONDITION_KEY] = false;
-      if (consumerContent[Globals.CONDITIONS_KEY] == null)
-        consumerContent[Globals.CONDITIONS_KEY] = new List();
+      if (consumerContent[Globals.STOP_EVENT_KEY] == null) consumerContent[Globals.STOP_EVENT_KEY] = false;
+      if (consumerContent[Globals.ANY_CONDITION_KEY] == null) consumerContent[Globals.ANY_CONDITION_KEY] = false;
+      consumerContent[Globals.CONDITIONS_KEY] = GameDecoderHelper.toListSupportingString(consumerContent[Globals.CONDITIONS_KEY]);
+      consumerContent[Globals.APPLY_KEY] = GameDecoderHelper.toListSupportingString(consumerContent[Globals.APPLY_KEY]);
       if (consumerContent[Globals.CONDITIONS_KEY].length == 0)
-        print("warning, event consumer without conditions, will consume each event it listens to");
-      if (consumerContent[Globals.APPLY_KEY] == null || consumerContent[Globals.APPLY_KEY].length == 0)
+      print("warning, event consumer without conditions, will consume each event it listens to");
+      if (consumerContent[Globals.APPLY_KEY].length == 0)
         print("no apply in event, event doing nothing, maybe not a good idea");
-      if (consumerContent[Globals.TEXT_KEY] == null)
-        consumerContent[Globals.TEXT_KEY] = "";
-      if (consumerContent[Globals.TEXT_KEY] is List)
-        consumerContent[Globals.TEXT_KEY] = consumerContent[Globals.TEXT_KEY].join("\n");
+      consumerContent[Globals.TEXT_KEY] = GameDecoderHelper.toStringSupportingList(consumerContent[Globals.TEXT_KEY]);
       CustomizableEventConsumer consumer = new CustomizableEventConsumer(
           consumerContent[Globals.LISTEN_KEY],
           text: consumerContent[Globals.TEXT_KEY],
@@ -399,8 +346,7 @@ class GameDecoderJSON extends GameDecoderBase {
   }
 
   static SplayTreeMap<num, BaseGameObject> parseObjects(var objectsContent){
-    if (objectsContent == null) objectsContent = new List();
-    if (objectsContent is Map) objectsContent = new List()..add(objectsContent);
+    objectsContent = GameDecoderHelper.toListSupportingMap(objectsContent);
     SplayTreeMap<num, BaseGameObject> map = new SplayTreeMap<num, BaseGameObject>();
     for (Map objectContent in objectsContent){
       BaseGameObject object = parseObject(objectContent);
@@ -411,8 +357,7 @@ class GameDecoderJSON extends GameDecoderBase {
   }
 
   static List<Npc> parseNpcs(var npcsContent){
-    if (npcsContent == null) npcsContent = new List();
-    if (npcsContent is Map) npcsContent = new List()..add(npcsContent);
+    npcsContent = GameDecoderHelper.toListSupportingMap(npcsContent);
     List<Npc> npcs = new List();
     for (Map npcContent in npcsContent){
       Npc npc = parseNpc(npcContent);
@@ -423,17 +368,15 @@ class GameDecoderJSON extends GameDecoderBase {
   }
 
   static Npc parseNpc(Map npcContent){
-    if (npcContent[Globals.NAME_KEY] == null){
-      print("no name for this npc, will not be parsed");
+    if (!GameDecoderHelper.isMandatoryKeyPresent(npcContent, Globals.NAME_KEY))
       return null;
-    }
     Npc npc = new Npc();
     npc.name = npcContent[Globals.NAME_KEY];
-    if (npcContent[Globals.PROPERTIES_KEY] == null) npcContent[Globals.PROPERTIES_KEY] = new List();
+    npcContent[Globals.PROPERTIES_KEY] = GameDecoderHelper.toListSupportingMap(npcContent[Globals.PROPERTIES_KEY]);
     npc.properties = parseProperties(npcContent[Globals.PROPERTIES_KEY]);
-    if (npcContent[Globals.INVENTORY_KEY] == null) npcContent[Globals.INVENTORY_KEY] = new List();
+    npcContent[Globals.INVENTORY_KEY] = GameDecoderHelper.toListSupportingString(npcContent[Globals.INVENTORY_KEY]);
     npc.inventory = parseInventory(npcContent[Globals.INVENTORY_KEY]);
-    if (npcContent[Globals.WEARING_KEY] == null) npcContent[Globals.WEARING_KEY] = new List();
+    npcContent[Globals.WEARING_KEY] = GameDecoderHelper.toListSupportingString(npcContent[Globals.WEARING_KEY]);
     npc.wearing = parseInventory(npcContent[Globals.WEARING_KEY]);
     if (npcContent[Globals.INTERACTIONS_KEY] == null) {
       npcContent[Globals.INTERACTIONS_KEY] = new List();
@@ -450,22 +393,14 @@ class GameDecoderJSON extends GameDecoderBase {
   }
 
   static NpcInteraction parseInteraction(Map interactionContent){
-    if (interactionContent[Globals.ACTION_NAME_KEY] == null){
-      print("interaction without an actionName, will not be parsed");
+    if (!GameDecoderHelper.isMandatoryKeyPresent(interactionContent, Globals.ACTION_NAME_KEY))
       return null;
-    }
-    if (interactionContent[Globals.ANY_CONDITION_KEY] == null)
-      interactionContent[Globals.ANY_CONDITION_KEY] = false;
-    if (interactionContent[Globals.CONDITIONS_KEY] == null)
-      interactionContent[Globals.CONDITIONS_KEY] = new List();
+    if (interactionContent[Globals.ANY_CONDITION_KEY] == null) interactionContent[Globals.ANY_CONDITION_KEY] = false;
+    interactionContent[Globals.CONDITIONS_KEY] = GameDecoderHelper.toListSupportingString(interactionContent[Globals.CONDITIONS_KEY]);
+    interactionContent[Globals.APPLY_KEY] = GameDecoderHelper.toListSupportingString(interactionContent[Globals.APPLY_KEY]);
     if (interactionContent[Globals.CONDITIONS_KEY].length == 0)
       print("warning, event consumer without conditions, will consume each event it listens to");
-    if (interactionContent[Globals.APPLY_KEY] == null)
-      interactionContent[Globals.APPLY_KEY] = new List();
-    if (interactionContent[Globals.TEXT_KEY] == null)
-      interactionContent[Globals.TEXT_KEY] = "";
-    if (interactionContent[Globals.TEXT_KEY] is List)
-      interactionContent[Globals.TEXT_KEY] = interactionContent[Globals.TEXT_KEY].join("\n");
+    interactionContent[Globals.TEXT_KEY] = GameDecoderHelper.toStringSupportingList(interactionContent[Globals.TEXT_KEY]);
     NpcInteraction interaction = new NpcInteraction(
         interactionContent[Globals.ACTION_NAME_KEY],
         anyConditions: interactionContent[Globals.ANY_CONDITION_KEY],
