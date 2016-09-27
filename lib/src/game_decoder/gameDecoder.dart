@@ -21,7 +21,7 @@ class GameDecoderJSON extends GameDecoderBase {
     Map<String, dynamic> gameJson = JSON.decode(content)["game"];
     Game game = new Game(io);
     game.objectStorage = parseObjects(gameJson[Globals.OBJECTS_KEY]);
-    game.npcStorage = parseNpcs(gameJson[Globals.NPC_KEY]);
+    game.npcStorage = parseNpcs(gameJson[Globals.NPCS_KEY]);
     for (String key in gameJson.keys){
       switch(key){
         case Globals.GLOBALS_KEY:
@@ -40,7 +40,7 @@ class GameDecoderJSON extends GameDecoderBase {
         case Globals.VERSION_KEY:
         case Globals.CURRENT_ROOM_KEY:
         case Globals.OBJECTS_KEY:
-        case Globals.NPC_KEY:
+        case Globals.NPCS_KEY:
           break;
         default:
           print("wrong key found in json content : $key, will not be parsed");
@@ -182,15 +182,19 @@ class GameDecoderJSON extends GameDecoderBase {
       roomContent[Globals.PROPERTIES_KEY] = parseProperties(roomContent[Globals.PROPERTIES_KEY]);
       Room room = new Room(roomContent[Globals.ID_KEY].hashCode, roomContent[Globals.NAME_KEY], roomContent[Globals.DESCRIPTION_KEY], roomContent[Globals.PROPERTIES_KEY]);
       List<BaseGameObject> objects = new List();
-      var objectsContent = roomContent[Globals.OBJECTS_KEY];
-      if (objectsContent != null){
-        if (objectsContent is String) objectsContent = new List()..add(objectsContent);
-        for (String objectName in objectsContent){
-          BaseGameObject object = Game.game.getObjectByName(objectName);
-          if (object != null) objects.add(object);
-        }
+      var objectsContent = GameDecoderHelper.toListSupportingString(roomContent[Globals.OBJECTS_KEY]);
+      for (String objectName in objectsContent){
+        BaseGameObject object = Game.game.getObjectByName(objectName);
+        if (object != null) objects.add(object);
       }
       room.objects = objects;
+      List<Npc> npcs = new List();
+      var npcsContent = GameDecoderHelper.toListSupportingString(roomContent[Globals.NPCS_KEY]);
+      for (String npcName in npcsContent){
+        Npc npc = Game.game.getNpcByName(npcName);
+        if (npc != null) npcs.add(npc);
+      }
+      room.npcs = npcs;
       room.nextRooms = new Map();
       var nextRoomsContent = roomContent[Globals.DIRECTION_KEY];
       if (nextRoomsContent != null) {
@@ -356,13 +360,13 @@ class GameDecoderJSON extends GameDecoderBase {
     return map;
   }
 
-  static List<Npc> parseNpcs(var npcsContent){
+  static SplayTreeMap<num, Npc> parseNpcs(var npcsContent){
     npcsContent = GameDecoderHelper.toListSupportingMap(npcsContent);
-    List<Npc> npcs = new List();
+    SplayTreeMap<num, Npc> npcs = new SplayTreeMap<num, Npc>();
     for (Map npcContent in npcsContent){
       Npc npc = parseNpc(npcContent);
       if (npc != null)
-        npcs.add(npc);
+        npcs[npc.name.hashCode] = npc;
     }
     return npcs;
   }

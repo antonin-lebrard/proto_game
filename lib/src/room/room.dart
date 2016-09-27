@@ -10,6 +10,8 @@ class Room extends HasDescription {
 
   List<BaseGameObject> objects;
 
+  List<Npc> npcs;
+
   Map<String, BaseProperty> properties;
 
   Map<Direction, Room> nextRooms;

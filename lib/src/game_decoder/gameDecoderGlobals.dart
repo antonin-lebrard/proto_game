@@ -15,7 +15,7 @@ class Globals {
   static const String PLAYER_KEY = 'player';
   static const String PLATEAU_KEY = 'rooms';
   static const String EVENTS_KEY = 'events';
-  static const String NPC_KEY = 'npc';
+  static const String NPCS_KEY = 'npcs';
   static const String CURRENT_ROOM_KEY = 'currentRoomId';
 
   static const String PROPERTIES_KEY = 'properties';

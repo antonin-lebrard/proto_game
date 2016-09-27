@@ -36,6 +36,7 @@ void main() {
       expect(start.description == "the starting room", isTrue);
       expect(start.name == "Start", isTrue);
       expect(start.objects.length == 1, isTrue);
+      expect(start.npcs.length == 1, isTrue);
       expect(start.nextRooms.length == 2, isTrue);
       expect(start.nextRooms.containsKey(Direction.NORTH), isTrue);
       expect(start.nextRooms.containsKey(Direction.EAST), isTrue);
@@ -132,6 +133,25 @@ void main() {
       t = consumers.first.operations.toList()[1].variables.toList()[1];
       expect(t.getValue() == "applying event consumer effect", isTrue);
       expect(t.getType() == String, isTrue);
+    });
+    test('decoding npcs', (){
+      expect(start.npcs.length, equals(1));
+      expect(start.npcs.first.name, equals("npc1"));
+      expect(start.npcs.first, same(game.getNpcByName("npc1")));
+      expect(start.npcs.first.getProperty("npcProp1")?.getValue(), equals(0));
+      expect(start.npcs.first.getProperty("npcProp1")?.getType(), equals(int));
+      expect(start.npcs.first.getProperty("npcProp2")?.getValue(), equals("nothing"));
+      expect(start.npcs.first.getProperty("npcProp2")?.getType(), equals(String));
+      expect(start.npcs.first.inventory.length, equals(1));
+      expect(start.npcs.first.inventory.first, same(game.getObjectByName("Bag")));
+      expect(start.npcs.first.interactions.length, equals(2));
+      expect(start.npcs.first.interactions.first.actionName, equals("talk"));
+      expect(start.npcs.first.interactions.last.actionName, equals("talk"));
+      expect(start.npcs.first.interactions.first.conditions.length, equals(1));
+      expect(start.npcs.first.interactions.first.operations.length, equals(1));
+      expect(start.npcs.first.interactions.last.conditions.length, equals(1));
+      expect(start.npcs.first.interactions.first.text, equals("Hello You !"));
+      expect(start.npcs.first.interactions.last.text, equals("Welcome !"));
     });
   });
 }

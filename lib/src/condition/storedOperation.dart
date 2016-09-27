@@ -52,25 +52,14 @@ class StoredOperation {
       }
       else if (varPart[0] == "player") {
         if (varPart[1] == "properties") {
-          for (String key in Game.game.player.properties.keys) {
-            if (varPart[2] == key) {
-              return Game.game.player.properties[key];
-            }
-          }
+          return Game.game.player.properties[varPart[2]];
         }
       }
       else if (varPart[0] == "npcs") {
-        for (Npc npc in Game.game.npcStorage) {
-          if (npc.name == varPart[1]) {
-            if (varPart[2] == "properties"){
-              for (String key in npc.properties.keys){
-                if (varPart[3] == key){
-                  return npc.properties[key];
-                }
-              }
-              break;
-            }
-            break;
+        Npc npc = Game.game.getNpcByName(varPart[1]);
+        if (npc != null) {
+          if (varPart[2] == "properties"){
+            return npc.properties[varPart[3]];
           }
         }
       }

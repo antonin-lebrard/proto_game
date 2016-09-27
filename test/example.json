@@ -27,6 +27,7 @@
         "objects": [
           "object1"
         ],
+        "npcs": "npc1",
         "direction": {
           "north": "test",
           "east": "test2"
@@ -42,6 +43,9 @@
         }
       },
       { "id": "test2", "name": "Test2", "description": "another test room",
+        "npcs": [
+          "npc2"
+        ],
         "direction": {
           "west": "start",
           "north_west": "test"
@@ -73,7 +77,7 @@
         ]
       }
     ],
-    "npc": [
+    "npcs": [
       {
         "name": "npc1",
         "properties": [
@@ -84,15 +88,18 @@
         "interactions": [
           {
             "actionName": "talk",
-            "conditions": [ "npcs.npc1.properties.npcProp1 == 0" ], "apply": [ "npcs.npc1.properties.npcProp1 += 1" ],
+            "conditions": "npcs.npc1.properties.npcProp1 == 0", "apply": "npcs.npc1.properties.npcProp1 += 1",
             "text": "Hello You !"
           },
           {
             "actionName": "talk",
-            "conditions": [ "npcs.npc1.properties.npcProp1 == 1" ],
+            "conditions": "npcs.npc1.properties.npcProp1 == 1",
             "text": "Welcome !"
           }
         ]
+      },
+      {
+        "name": "npc2"
       }
     ],
     "currentRoomId": "start"
