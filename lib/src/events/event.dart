@@ -4,15 +4,20 @@ part of proto_game.events;
 class EventMappings {
 
   static final Map<Type, Map<String, dynamic>> eventMappings = {
-    ExamineEvent : {
-      "params": { "thing": HasDescription },
-      "name": "examine",
-      "createInstance": (HasDescription thing) => new ExamineEvent(thing),
-    },
     MoveEvent : {
       "params": { "from": Room, "to": Room },
       "name": "move",
       "createInstance": (Room from, Room to) => new MoveEvent(from, to),
+    },
+    InteractEvent : {
+      "params": { "npc": Npc, "action": String },
+      "name": "interact",
+      "createInstance": (Npc npc, String actionName) => new InteractEvent(npc, actionName),
+    },
+    ExamineEvent : {
+      "params": { "thing": HasDescription },
+      "name": "examine",
+      "createInstance": (HasDescription thing) => new ExamineEvent(thing),
     },
     TakeEvent : {
       "params": { "object": BaseGameObject },
@@ -64,17 +69,25 @@ abstract class Event {
 
 }
 
-class ExamineEvent extends Event {
-  HasDescription thing;
-  ExamineEvent(this.thing) {
-    _setProperties({"thing":thing});
-  }
-}
-
 class MoveEvent extends Event {
   Room from, to;
   MoveEvent(this.from, this.to) {
     _setProperties({"from":from, "to":to});
+  }
+}
+
+class InteractEvent extends Event {
+  Npc npc;
+  String actionName;
+  InteractEvent(this.npc, this.actionName){
+    _setProperties({"npc":npc, "action":actionName});
+  }
+}
+
+class ExamineEvent extends Event {
+  HasDescription thing;
+  ExamineEvent(this.thing) {
+    _setProperties({"thing":thing});
   }
 }
 

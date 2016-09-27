@@ -3,15 +3,6 @@ part of proto_game.events;
 
 class EventsManager {
 
-  static Map<Type, String> _eventsClassToName = {
-    MoveEvent   : "move",
-    TakeEvent   : "take",
-    DropEvent   : "drop",
-    WearEvent   : "wear",
-    RemoveEvent : "remove",
-    UseEvent    : "use",
-  };
-
   static EventsManager _singleton;
 
   Map<Type, List<EventConsumer>> _consumers = new Map();
@@ -23,7 +14,7 @@ class EventsManager {
   }
 
   EventsManager._internal(){
-    for (Type t in _eventsClassToName.keys){
+    for (Type t in EventMappings.eventMappings.keys){
       _consumers[t] = new List();
     }
   }
@@ -43,7 +34,7 @@ class EventsManager {
   }
 
   void addEventListener(Type eventType, EventConsumer consumer){
-    if (_eventsClassToName.keys.contains(eventType)) {
+    if (_consumers.containsKey(eventType)) {
       _consumers[eventType].add(consumer);
     } else {
       print("Warning : eventType does not exist");
