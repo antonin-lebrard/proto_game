@@ -1,6 +1,6 @@
 part of proto_game.player;
 
-class Player {
+class Player extends ExposedAPI {
 
   String name = "Player";
 
@@ -11,6 +11,10 @@ class Player {
   List<BaseGameObject> inventory = new List();
 
   List<WearableGameObject> wearing = new List();
+
+  Map<String, dynamic> exposeAPI() {
+    return properties;
+  }
 
   BaseProperty getProperty(String name){
     if (properties[name] == null){

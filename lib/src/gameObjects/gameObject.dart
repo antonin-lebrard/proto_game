@@ -1,6 +1,6 @@
 part of proto_game.gameObjects;
 
-class BaseGameObject extends HasDescription {
+class BaseGameObject extends ExposedAPI implements HasDescription {
 
   num id;
 
@@ -9,6 +9,10 @@ class BaseGameObject extends HasDescription {
   String description;
 
   Map<String, BaseProperty> properties;
+
+  Map<String, dynamic> exposeAPI() {
+    return { name : properties };
+  }
 
   BaseGameObject(this.id, this.name, this.description, this.properties);
 

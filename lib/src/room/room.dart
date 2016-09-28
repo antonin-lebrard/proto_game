@@ -1,6 +1,6 @@
 part of proto_game.room;
 
-class Room extends HasDescription {
+class Room extends ExposedAPI implements HasDescription {
 
   int id;
 
@@ -30,4 +30,7 @@ class Room extends HasDescription {
     return true;
   }
 
+  Map<String, dynamic> exposeAPI() {
+    return { name : properties };
+  }
 }

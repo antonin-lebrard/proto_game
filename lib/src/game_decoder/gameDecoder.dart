@@ -51,6 +51,7 @@ class GameDecoderJSON extends GameDecoderBase {
       f();
     }
     _toExecuteAtTheEnd.clear();
+    game.initAPI();
     return game;
   }
 

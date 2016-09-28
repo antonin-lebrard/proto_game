@@ -1,7 +1,7 @@
 part of proto_game.npc;
 
 
-class Npc {
+class Npc extends ExposedAPI implements HasDescription {
 
   String name;
 
@@ -13,12 +13,20 @@ class Npc {
 
   List<NpcInteraction> interactions = new List();
 
-  BaseProperty getProperty(String name){
-    if (properties[name] == null){
+  BaseProperty getProperty(String name) {
+    if (properties[name] == null) {
       print("Wrong name, property $name does not exist");
       return null;
     }
     return new ModifiedProperty(properties[name], wearing);
   }
 
+  // TODO : proper description
+  String getDescription() => "TODO : $name";
+
+  Map<String, dynamic> exposeAPI() {
+    return {
+      name : properties
+    };
+  }
 }
