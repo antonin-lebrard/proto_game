@@ -40,7 +40,11 @@ class StoredCondition {
     HasValue o = DecodingHelper.decodeExpectedVariable(varPart, eventType);
     if (o != null) return o;
 
-    try {
+    o = DecodingHelper.decodeGameAPIVariable(varPart);
+    if (o != null) return o;
+
+    return null;
+    /*try {
       if (varPart[0] == "global" || varPart[0] == "globals") {
         for (GlobalVariable g in Game.game.globals) {
           if (g.name == varPart[1]) {
@@ -55,7 +59,7 @@ class StoredCondition {
       }
       else if (varPart[0] == "rooms") {
         for (Room room in Game.game.player.plateau.rooms) {
-          if (room.id == varPart[1].hashCode) {
+          if (room.name_id == varPart[1]) {
             return new TempVariable(room);
           }
         }
@@ -71,7 +75,7 @@ class StoredCondition {
     } on IndexError {
       return null;
     }
-    return null;
+    return null;*/
   }
 
 }

@@ -47,11 +47,11 @@ class GameDecoderJSON extends GameDecoderBase {
           break;
       }
     }
+    game.initAPI();
     for (Function f in _toExecuteAtTheEnd){
       f();
     }
     _toExecuteAtTheEnd.clear();
-    game.initAPI();
     return game;
   }
 
@@ -156,13 +156,13 @@ class GameDecoderJSON extends GameDecoderBase {
     if (objectContent[Globals.TYPE_KEY] == null) objectContent[Globals.TYPE_KEY] = "base";
     switch(objectContent[Globals.TYPE_KEY]) {
       case "base":
-        object = new BaseGameObject(objectContent[Globals.NAME_KEY].hashCode, objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
+        object = new BaseGameObject(objectContent[Globals.NAME_KEY], objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
         break;
       case "wearable":
-        object = new WearableGameObject.noModifier(objectContent[Globals.NAME_KEY].hashCode, objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
+        object = new WearableGameObject.noModifier(objectContent[Globals.NAME_KEY], objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
         break;
       case "consumable":
-        object = new ConsumableGameObject.noModifier(objectContent[Globals.NAME_KEY].hashCode, objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
+        object = new ConsumableGameObject.noModifier(objectContent[Globals.NAME_KEY], objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
         break;
       default:
         print("wrong type of object : ${objectContent[Globals.TYPE_KEY]}, will not be parsed");
@@ -175,13 +175,13 @@ class GameDecoderJSON extends GameDecoderBase {
     plateauContent = GameDecoderHelper.toListSupportingMap(plateauContent);
     Plateau plateau;
     List<Room> rooms = new List();
-    Map<Room, Map<Direction, num>> roomsLinksMap = new Map();
+    Map<Room, Map<Direction, String>> roomsLinksMap = new Map();
     for (Map roomContent in plateauContent) {
       if (!GameDecoderHelper.isMandatoryKeysPresent(roomContent, [Globals.ID_KEY, Globals.NAME_KEY]))
         continue;
       roomContent[Globals.PROPERTIES_KEY] = GameDecoderHelper.toListSupportingMap(roomContent[Globals.PROPERTIES_KEY]);
       roomContent[Globals.PROPERTIES_KEY] = parseProperties(roomContent[Globals.PROPERTIES_KEY]);
-      Room room = new Room(roomContent[Globals.ID_KEY].hashCode, roomContent[Globals.NAME_KEY], roomContent[Globals.DESCRIPTION_KEY], roomContent[Globals.PROPERTIES_KEY]);
+      Room room = new Room(roomContent[Globals.ID_KEY], roomContent[Globals.NAME_KEY], roomContent[Globals.DESCRIPTION_KEY], roomContent[Globals.PROPERTIES_KEY]);
       List<BaseGameObject> objects = new List();
       var objectsContent = GameDecoderHelper.toListSupportingString(roomContent[Globals.OBJECTS_KEY]);
       for (String objectName in objectsContent){
@@ -202,11 +202,11 @@ class GameDecoderJSON extends GameDecoderBase {
         if (!(nextRoomsContent is Map))
           print("directions not correctly formated, expecting Map definition {}");
         else {
-          Map<Direction, num> tempDirections = new Map();
+          Map<Direction, String> tempDirections = new Map();
           for (String key in nextRoomsContent.keys) {
             Direction dir = parseDirection(key);
             if (dir != null)
-              tempDirections[dir] = nextRoomsContent[key].hashCode;
+              tempDirections[dir] = nextRoomsContent[key];
           }
           if (tempDirections.keys.length != 0)
             roomsLinksMap[room] = tempDirections;
@@ -217,7 +217,7 @@ class GameDecoderJSON extends GameDecoderBase {
     plateau = new Plateau(linkRooms(rooms, roomsLinksMap));
     if (currentRoomId != null) {
       for (Room comparedRoom in plateau.rooms){
-        if (currentRoomId.hashCode == comparedRoom.id){
+        if (currentRoomId == comparedRoom.name_id){
           plateau.currentRoom = comparedRoom;
           break;
         }
@@ -293,14 +293,14 @@ class GameDecoderJSON extends GameDecoderBase {
     return direction;
   }
 
-  static List<Room> linkRooms(List<Room> rooms, Map<Room, Map<Direction, num>> linkingMap) {
+  static List<Room> linkRooms(List<Room> rooms, Map<Room, Map<Direction, String>> linkingMap) {
     List<Room> linkedRooms = new List();
     for (Room room in linkingMap.keys) {
       Map<Direction, Room> nextRooms = new Map();
       for (Direction dirKey in linkingMap[room].keys) {
         Room linkRoom;
         for (Room comparedRoom in rooms) {
-          if (comparedRoom.id == linkingMap[room][dirKey]) {
+          if (comparedRoom.name_id == linkingMap[room][dirKey]) {
             linkRoom = comparedRoom;
             break;
           }
@@ -339,12 +339,14 @@ class GameDecoderJSON extends GameDecoderBase {
           stopEvent: consumerContent[Globals.STOP_EVENT_KEY],
           anyConditions: consumerContent[Globals.ANY_CONDITION_KEY]
       );
-      for (String condition in consumerContent[Globals.CONDITIONS_KEY]){
-        consumer.conditions.add(new StoredCondition.fromString(consumer.listenTo, condition));
-      }
-      for (String operation in consumerContent[Globals.APPLY_KEY]){
-        consumer.operations.add(new StoredOperation.fromString(operation));
-      }
+      _toExecuteAtTheEnd.add((){
+        for (String condition in consumerContent[Globals.CONDITIONS_KEY]){
+          consumer.conditions.add(new StoredCondition.fromString(consumer.listenTo, condition));
+        }
+        for (String operation in consumerContent[Globals.APPLY_KEY]){
+          consumer.operations.add(new StoredOperation.fromString(operation));
+        }
+      });
       consumers.add(consumer);
     }
     return consumers;
@@ -356,7 +358,7 @@ class GameDecoderJSON extends GameDecoderBase {
     for (Map objectContent in objectsContent){
       BaseGameObject object = parseObject(objectContent);
       if (object != null)
-        map[object.id] = object;
+        map[object.name_id.hashCode] = object;
     }
     return map;
   }

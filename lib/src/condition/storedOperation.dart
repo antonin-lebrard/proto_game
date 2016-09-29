@@ -42,7 +42,13 @@ class StoredOperation {
 
   HasValue _decodeVariable(String s) {
     List<String> varPart = s.split('.');
-    try {
+
+    HasValue o = DecodingHelper.decodeGameAPIVariable(varPart);
+    if (o != null) return o;
+
+    return null;
+
+    /*try {
       if (varPart[0] == "global" || varPart[0] == "globals") {
         for (GlobalVariable g in Game.game.globals) {
           if (g.name == varPart[1]) {
@@ -66,7 +72,7 @@ class StoredOperation {
     } on IndexError {
       return null;
     }
-    return null;
+    return null;*/
   }
 
   Function _decodeFunction(String s){

@@ -88,12 +88,12 @@
         "interactions": [
           {
             "actionName": "talk",
-            "conditions": "npcs.npc1.properties.npcProp1 == 0", "apply": "npcs.npc1.properties.npcProp1 += 1",
+            "conditions": "npcs.npc1.npcProp1 == 0", "apply": "npcs.npc1.npcProp1 += 1",
             "text": "Hello You !"
           },
           {
             "actionName": "talk",
-            "conditions": "npcs.npc1.properties.npcProp1 == 1",
+            "conditions": "npcs.npc1.npcProp1 == 1",
             "text": "Welcome !"
           }
         ]

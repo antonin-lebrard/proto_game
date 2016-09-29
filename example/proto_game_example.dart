@@ -22,9 +22,9 @@ main() {
   String json = new File('example/example.json').readAsStringSync();
   Game game = new GameDecoderJSON().readFromFormat(json, new TestingIo());
 
-  Room start = game.player.plateau.rooms.firstWhere((Room elem) => elem.name == "Start");
-  Room test = game.player.plateau.rooms.firstWhere((Room elem) => elem.name == "Test");
-  Room test2 = game.player.plateau.rooms.firstWhere((Room elem) => elem.name == "Test2");
+  Room start = game.player.plateau.rooms.firstWhere((Room elem) => elem.name_id == "start");
+  Room test = game.player.plateau.rooms.firstWhere((Room elem) => elem.name_id == "test");
+  Room test2 = game.player.plateau.rooms.firstWhere((Room elem) => elem.name_id == "test2");
 
   new EventsManager().emitEvent(new MoveEvent(start, test));
   new EventsManager().emitEvent(new MoveEvent(start, test));
@@ -37,7 +37,7 @@ main() {
   var x = 0;
 
   while(true) {
-    print("You are in the room: ${game.player.plateau.currentRoom.name}");
+    print("You are in the room: ${game.player.plateau.currentRoom.displayName}");
     String line = stdin.readLineSync();
     String command = line.substring(0, line.indexOf(' '));
     if (command == "move"){

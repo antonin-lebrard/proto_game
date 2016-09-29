@@ -2,9 +2,9 @@ part of proto_game.room;
 
 class Room extends ExposedAPI implements HasDescription {
 
-  int id;
+  String name_id;
 
-  String name;
+  String displayName;
 
   String description;
 
@@ -16,7 +16,7 @@ class Room extends ExposedAPI implements HasDescription {
 
   Map<Direction, Room> nextRooms;
 
-  Room(this.id, this.name, this.description, this.properties);
+  Room(this.name_id, this.displayName, this.description, this.properties);
 
   String getDescription() => description;
 
@@ -31,6 +31,6 @@ class Room extends ExposedAPI implements HasDescription {
   }
 
   Map<String, dynamic> exposeAPI() {
-    return { name : properties };
+    return { name_id : new Map<String, dynamic>()..addAll(properties)..putIfAbsent("object", () => this) };
   }
 }

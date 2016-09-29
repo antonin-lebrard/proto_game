@@ -24,17 +24,17 @@ void main() {
     String json = new File('example/example.json').readAsStringSync();
     Game game = new GameDecoderJSON().readFromFormat(json, new TestingIo());
 
-    Room start = game.player.plateau.rooms.firstWhere((Room elem) => elem.name == "Start");
-    Room test1 = game.player.plateau.rooms.firstWhere((Room elem) => elem.name == "Test");
-    Room test2 = game.player.plateau.rooms.firstWhere((Room elem) => elem.name == "Test2");
+    Room start = game.player.plateau.rooms.firstWhere((Room elem) => elem.name_id == "start");
+    Room test1 = game.player.plateau.rooms.firstWhere((Room elem) => elem.name_id == "test");
+    Room test2 = game.player.plateau.rooms.firstWhere((Room elem) => elem.name_id == "test2");
 
     List<CustomizableEventConsumer> consumers = game.consumers.toList();
 
     test('decoding rooms', () {
       expect(start, isNot(null));
-      expect(start.id, equals("start".hashCode));
+      expect(start.name_id, equals("start"));
       expect(start.description, equals("the starting room"));
-      expect(start.name, equals("Start"));
+      expect(start.displayName, equals("Start"));
       expect(start.objects.length, equals(1));
       expect(start.npcs.length, equals(1));
       expect(start.nextRooms.length, equals(2));
@@ -56,23 +56,23 @@ void main() {
     test('decoding player', (){
       expect(game.player.name, equals("Sicile"));
       expect(game.player.inventory.length, equals(1));
-      expect(game.player.inventory.first.name, equals("Bag"));
+      expect(game.player.inventory.first.name_id, equals("Bag"));
       expect(game.player.properties.length, equals(2));
       expect(game.player.properties, contains("firstPropertyPlayer"));
       expect(game.player.properties, contains("secondPropertyPlayer"));
     });
     test('decoding objects', (){
       expect(game.player.inventory.length, equals(1));
-      expect(game.player.inventory.first.name, equals("Bag"));
+      expect(game.player.inventory.first.name_id, equals("Bag"));
       expect(game.player.inventory.first, same(game.getObjectByName("Bag")));
       expect(game.player.inventory.first, new isInstanceOf<WearableGameObject>());
       expect(game.player.inventory.first.description, equals("placeholder bag \ndescription"));
       expect(start.objects.length, equals(1));
-      expect(start.objects.first.name, equals("object1"));
+      expect(start.objects.first.name_id, equals("object1"));
       expect(start.objects.first.description, equals("object1 \ndescription"));
       expect(start.objects.first, new isInstanceOf<ConsumableGameObject>());
       expect(test1.objects.length, equals(1));
-      expect(test1.objects.first.name, equals("object2"));
+      expect(test1.objects.first.name_id, equals("object2"));
       expect(test1.objects.first.description, equals("object2 \ndescription"));
       expect(test1.objects.first, new isInstanceOf<BaseGameObject>());
     });

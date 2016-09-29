@@ -118,6 +118,22 @@ class DecodingHelper {
     return null;
   }
 
+  static HasValue decodeGameAPIVariable(List<String> varPart){
+    var currentNodeAPI = Game.game.api;
+    for (String part in varPart) {
+      currentNodeAPI = currentNodeAPI[part];
+      if (currentNodeAPI == null) {
+        print("api variable not found : $varPart");
+        break;
+      }
+    }
+    if (currentNodeAPI is Map)
+      currentNodeAPI = currentNodeAPI["object"];
+    if (!(currentNodeAPI is HasValue))
+      currentNodeAPI = new TempVariable(currentNodeAPI);
+    return currentNodeAPI;
+  }
+
   static String extractFunctionParam(String s){
     if (!isFunction(s)){
       print("problem extracting param from $s");
