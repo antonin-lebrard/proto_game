@@ -3,7 +3,9 @@ part of proto_game.npc;
 
 class Npc extends ExposedAPI implements HasDescription {
 
-  String name;
+  String name_id;
+
+  String displayName;
 
   Map<String, BaseProperty> properties = new Map();
 
@@ -22,11 +24,11 @@ class Npc extends ExposedAPI implements HasDescription {
   }
 
   // TODO : proper description
-  String getDescription() => "TODO : $name";
+  String getDescription() => "TODO : $name_id";
 
   Map<String, dynamic> exposeAPI() {
     return {
-      name : properties
+      name_id : properties
     };
   }
 }

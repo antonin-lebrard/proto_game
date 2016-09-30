@@ -135,8 +135,8 @@ class GameDecoderJSON extends GameDecoderBase {
   static List<BaseGameObject> parseInventory(var inventoryContent){
     inventoryContent = GameDecoderHelper.toListSupportingString(inventoryContent);
     List<BaseGameObject> inventory = new List();
-    for (String objectName in inventoryContent){
-      BaseGameObject object = Game.game.getObjectByName(objectName);
+    for (String objectId in inventoryContent){
+      BaseGameObject object = Game.game.getObjectById(objectId);
       if (object != null) inventory.add(object);
     }
     return inventory;
@@ -147,22 +147,23 @@ class GameDecoderJSON extends GameDecoderBase {
       print("object is not formated correctly, will not be parsed. (Content not parsed : $objectContent)");
       return null;
     }
-    if (!GameDecoderHelper.isMandatoryKeyPresent(objectContent, Globals.NAME_KEY))
+    if (!GameDecoderHelper.isMandatoryKeyPresent(objectContent, Globals.ID_KEY))
       return null;
     BaseGameObject object;
     // TODO : wrong !!
     objectContent[Globals.PROPERTIES_KEY] = GameDecoderHelper.toListSupportingMap(objectContent[Globals.PROPERTIES_KEY]);
     objectContent[Globals.PROPERTIES_KEY] = parseProperties(objectContent[Globals.PROPERTIES_KEY]);
+    objectContent[Globals.NAME_KEY] = objectContent[Globals.NAME_KEY] ?? objectContent[Globals.ID_KEY];
     if (objectContent[Globals.TYPE_KEY] == null) objectContent[Globals.TYPE_KEY] = "base";
     switch(objectContent[Globals.TYPE_KEY]) {
       case "base":
-        object = new BaseGameObject(objectContent[Globals.NAME_KEY], objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
+        object = new BaseGameObject(objectContent[Globals.ID_KEY], objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
         break;
       case "wearable":
-        object = new WearableGameObject.noModifier(objectContent[Globals.NAME_KEY], objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
+        object = new WearableGameObject.noModifier(objectContent[Globals.ID_KEY], objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
         break;
       case "consumable":
-        object = new ConsumableGameObject.noModifier(objectContent[Globals.NAME_KEY], objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
+        object = new ConsumableGameObject.noModifier(objectContent[Globals.ID_KEY], objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
         break;
       default:
         print("wrong type of object : ${objectContent[Globals.TYPE_KEY]}, will not be parsed");
@@ -184,15 +185,15 @@ class GameDecoderJSON extends GameDecoderBase {
       Room room = new Room(roomContent[Globals.ID_KEY], roomContent[Globals.NAME_KEY], roomContent[Globals.DESCRIPTION_KEY], roomContent[Globals.PROPERTIES_KEY]);
       List<BaseGameObject> objects = new List();
       var objectsContent = GameDecoderHelper.toListSupportingString(roomContent[Globals.OBJECTS_KEY]);
-      for (String objectName in objectsContent){
-        BaseGameObject object = Game.game.getObjectByName(objectName);
+      for (String objectId in objectsContent){
+        BaseGameObject object = Game.game.getObjectById(objectId);
         if (object != null) objects.add(object);
       }
       room.objects = objects;
       List<Npc> npcs = new List();
       var npcsContent = GameDecoderHelper.toListSupportingString(roomContent[Globals.NPCS_KEY]);
-      for (String npcName in npcsContent){
-        Npc npc = Game.game.getNpcByName(npcName);
+      for (String npcId in npcsContent){
+        Npc npc = Game.game.getNpcById(npcId);
         if (npc != null) npcs.add(npc);
       }
       room.npcs = npcs;
@@ -369,16 +370,17 @@ class GameDecoderJSON extends GameDecoderBase {
     for (Map npcContent in npcsContent){
       Npc npc = parseNpc(npcContent);
       if (npc != null)
-        npcs[npc.name.hashCode] = npc;
+        npcs[npc.name_id.hashCode] = npc;
     }
     return npcs;
   }
 
   static Npc parseNpc(Map npcContent){
-    if (!GameDecoderHelper.isMandatoryKeyPresent(npcContent, Globals.NAME_KEY))
+    if (!GameDecoderHelper.isMandatoryKeyPresent(npcContent, Globals.ID_KEY))
       return null;
     Npc npc = new Npc();
-    npc.name = npcContent[Globals.NAME_KEY];
+    npc.name_id = npcContent[Globals.ID_KEY];
+    npc.displayName = npcContent[Globals.NAME_KEY] ?? npcContent[Globals.ID_KEY];
     npcContent[Globals.PROPERTIES_KEY] = GameDecoderHelper.toListSupportingMap(npcContent[Globals.PROPERTIES_KEY]);
     npc.properties = parseProperties(npcContent[Globals.PROPERTIES_KEY]);
     npcContent[Globals.INVENTORY_KEY] = GameDecoderHelper.toListSupportingString(npcContent[Globals.INVENTORY_KEY]);

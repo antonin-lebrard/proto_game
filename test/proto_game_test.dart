@@ -56,23 +56,25 @@ void main() {
     test('decoding player', (){
       expect(game.player.name, equals("Sicile"));
       expect(game.player.inventory.length, equals(1));
-      expect(game.player.inventory.first.name_id, equals("Bag"));
+      expect(game.player.inventory.first.name_id, equals("bag"));
       expect(game.player.properties.length, equals(2));
       expect(game.player.properties, contains("firstPropertyPlayer"));
       expect(game.player.properties, contains("secondPropertyPlayer"));
     });
     test('decoding objects', (){
       expect(game.player.inventory.length, equals(1));
-      expect(game.player.inventory.first.name_id, equals("Bag"));
-      expect(game.player.inventory.first, same(game.getObjectByName("Bag")));
+      expect(game.player.inventory.first.name_id, equals("bag"));
+      expect(game.player.inventory.first, same(game.getObjectById("bag")));
       expect(game.player.inventory.first, new isInstanceOf<WearableGameObject>());
       expect(game.player.inventory.first.description, equals("placeholder bag \ndescription"));
       expect(start.objects.length, equals(1));
       expect(start.objects.first.name_id, equals("object1"));
+      expect(start.objects.first.displayName, equals("nameObject1"));
       expect(start.objects.first.description, equals("object1 \ndescription"));
       expect(start.objects.first, new isInstanceOf<ConsumableGameObject>());
       expect(test1.objects.length, equals(1));
       expect(test1.objects.first.name_id, equals("object2"));
+      expect(test1.objects.first.displayName, equals("nameObject2"));
       expect(test1.objects.first.description, equals("object2 \ndescription"));
       expect(test1.objects.first, new isInstanceOf<BaseGameObject>());
     });
@@ -137,8 +139,8 @@ void main() {
     });
     test('decoding npcs', (){
       expect(start.npcs.length, equals(1));
-      expect(start.npcs.first.name, equals("npc1"));
-      expect(start.npcs.first, same(game.getNpcByName("npc1")));
+      expect(start.npcs.first.name_id, equals("npc1"));
+      expect(start.npcs.first, same(game.getNpcById("npc1")));
       expect(start.npcs.first.properties, contains("npcProp1"));
       expect(start.npcs.first.properties, contains("npcProp2"));
       expect(start.npcs.first.getProperty("npcProp1").getValue(), equals(0));
@@ -146,7 +148,7 @@ void main() {
       expect(start.npcs.first.getProperty("npcProp2").getValue(), equals("nothing"));
       expect(start.npcs.first.getProperty("npcProp2").getType(), equals(String));
       expect(start.npcs.first.inventory.length, equals(1));
-      expect(start.npcs.first.inventory.first, same(game.getObjectByName("Bag")));
+      expect(start.npcs.first.inventory.first, same(game.getObjectById("bag")));
       expect(start.npcs.first.interactions.length, equals(2));
       expect(start.npcs.first.interactions.first.actionName, equals("talk"));
       expect(start.npcs.first.interactions.last.actionName, equals("talk"));

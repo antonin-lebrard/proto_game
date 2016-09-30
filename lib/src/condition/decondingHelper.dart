@@ -145,7 +145,7 @@ class DecodingHelper {
   static Function generateObjectAction(String functionCall, String action){
     String objectId = DecodingHelper.extractFunctionParam(functionCall);
     if (objectId == null) return null;
-    BaseGameObject object = Game.game.getObjectByName(objectId);
+    BaseGameObject object = Game.game.getObjectById(objectId);
     if (object == null) {
       print("$objectId id not found");
       return null;

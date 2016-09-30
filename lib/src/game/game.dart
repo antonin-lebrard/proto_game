@@ -30,9 +30,9 @@ class Game {
 
   HashMap<String, dynamic> api = new HashMap<String, dynamic>();
 
-  BaseGameObject getObjectByName(String name) => objectStorage[name.hashCode];
+  BaseGameObject getObjectById(String id) => objectStorage[id.hashCode];
 
-  Npc getNpcByName(String name) => npcStorage[name.hashCode];
+  Npc getNpcById(String id) => npcStorage[id.hashCode];
 
   set consumers(List<EventConsumer> consumers) {
     consumers.forEach((EventConsumer ec){
