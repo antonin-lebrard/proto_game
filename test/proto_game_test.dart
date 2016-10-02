@@ -158,5 +158,19 @@ void main() {
       expect(start.npcs.first.interactions.first.text, equals("Hello You !"));
       expect(start.npcs.first.interactions.last.text, equals("Welcome !"));
     });
+    test('decoding interactionChoices', (){
+      expect(game.interactionChoicesStorage.length, equals(3));
+      InteractionChoice interactionChoice = game.getInteractionChoiceById('choices1');
+      expect(interactionChoice, isNotNull);
+      expect(interactionChoice.id, equals('choices1'));
+      expect(interactionChoice.choices.length, equals(3));
+      expect(interactionChoice.choices.first.name, equals('choice1'));
+      expect(interactionChoice.choices.first.text, equals('choice1'));
+      expect(interactionChoice.choices.first.operations.length, equals(2));
+      expect(interactionChoice.choices.last.name, equals('Cancel'));
+      interactionChoice = game.getInteractionChoiceById('choice2');
+      expect(interactionChoice, isNotNull);
+      expect(interactionChoice.choices.length, equals(1));
+    });
   });
 }
