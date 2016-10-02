@@ -3,6 +3,7 @@
 
 library proto_game.test;
 
+import 'dart:async';
 import 'dart:io';
 import 'package:proto_game/proto_game.dart';
 import 'package:proto_game/src/condition/condition_entryPoint.dart';
@@ -10,11 +11,12 @@ import 'package:test/test.dart';
 
 class TestingIo extends LowLevelIo{
   void clear() {}
-  String readLine() => "";
+  Future<String> readLine() => new Future.value("");
   void removeChars(int nb) {}
   void writeLine(String line) {}
   void writeNewLine(String line) {}
   void writeString(String string) {}
+  Future<String> presentChoices(List<String> choices) => new Future.value("");
 }
 
 void main() {
@@ -168,7 +170,7 @@ void main() {
       expect(interactionChoice.choices.first.text, equals('choice1'));
       expect(interactionChoice.choices.first.operations.length, equals(2));
       expect(interactionChoice.choices.last.name, equals('Cancel'));
-      interactionChoice = game.getInteractionChoiceById('choice2');
+      interactionChoice = game.getInteractionChoiceById('choices2');
       expect(interactionChoice, isNotNull);
       expect(interactionChoice.choices.length, equals(1));
     });

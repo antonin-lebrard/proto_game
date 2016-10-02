@@ -24,9 +24,14 @@ abstract class LowLevelIo {
   void removeChars(int nb);
 
   /**
-   * Wait for input from user
+   * Wait for input from user, should be blocking
    */
-  String readLine();
+  Future<String> readLine();
+
+  /**
+   * Present a list of choices, and wait for the user to choose one
+   */
+  Future<String> presentChoices(List<String> choices);
 
   /**
    * Clear Output

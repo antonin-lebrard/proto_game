@@ -10,11 +10,12 @@ import 'package:proto_game/proto_game.dart';
 
 class TestingIo extends LowLevelIo{
   void clear() {}
-  String readLine() => "";
+  Future<String> readLine() => new Future.value("");
   void removeChars(int nb) {}
   void writeLine(String line) {print(line);}
   void writeNewLine(String line) {}
   void writeString(String string) {}
+  Future<String> presentChoices(List<String> choices) => new Future.value("");
 }
 
 main() {

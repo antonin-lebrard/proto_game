@@ -10,6 +10,14 @@ class InteractionChoice {
 
   InteractionChoice(this.id);
 
+  Future execute() async {
+    Choice c = await Game.game.gameLinkIo.presentChoices(choices);
+    if (c != null) {
+      Game.game.gameLinkIo.write(c.text);
+      c.operations.forEach((StoredOperation o) => o.applyOperation());
+    }
+  }
+
 }
 
 class Choice {

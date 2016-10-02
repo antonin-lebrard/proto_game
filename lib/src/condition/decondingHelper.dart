@@ -161,8 +161,7 @@ class DecodingHelper {
       print("$choiceId id not found");
       return null;
     }
-    // TODO :
-    return () => null;
+    return () => choice.execute();
   }
 
 }

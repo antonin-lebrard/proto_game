@@ -42,6 +42,7 @@ class GameDecoderJSON extends GameDecoderBase {
         case Globals.CURRENT_ROOM_KEY:
         case Globals.OBJECTS_KEY:
         case Globals.NPCS_KEY:
+        case Globals.INTERACTION_CHOICES_KEY:
           break;
         default:
           print("wrong key found in json content : $key, will not be parsed");
