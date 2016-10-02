@@ -22,6 +22,7 @@ class GameDecoderJSON extends GameDecoderBase {
     Game game = new Game(io);
     game.objectStorage = parseObjects(gameJson[Globals.OBJECTS_KEY]);
     game.npcStorage = parseNpcs(gameJson[Globals.NPCS_KEY]);
+    game.interactionChoicesStorage = parseInteractionChoices(gameJson[Globals.INTERACTION_CHOICES_KEY]);
     for (String key in gameJson.keys){
       switch(key){
         case Globals.GLOBALS_KEY:
@@ -424,6 +425,53 @@ class GameDecoderJSON extends GameDecoderBase {
       }
     });
     return interaction;
+  }
+
+  static SplayTreeMap<num, InteractionChoice> parseInteractionChoices(var interactionChoicesContent){
+    interactionChoicesContent = GameDecoderHelper.toListSupportingMap(interactionChoicesContent);
+    SplayTreeMap<num, InteractionChoice> interactionChoices = new SplayTreeMap<num, InteractionChoice>();
+    for (var interactionChoiceContent in interactionChoicesContent){
+      InteractionChoice choice = parseInteractionChoice(interactionChoiceContent);
+      if (choice != null)
+        interactionChoices[choice.id.hashCode] = choice;
+    }
+    return interactionChoices;
+  }
+
+  static InteractionChoice parseInteractionChoice(Map interactionChoiceContent){
+    if (!GameDecoderHelper.isMandatoryKeyPresent(interactionChoiceContent, Globals.ID_KEY))
+      return null;
+    interactionChoiceContent[Globals.CHOICES_KEY] = GameDecoderHelper.toListSupportingMap(interactionChoiceContent[Globals.CHOICES_KEY]);
+    if (interactionChoiceContent[Globals.WITH_CANCEL_KEY] == null)
+      interactionChoiceContent[Globals.WITH_CANCEL_KEY] = true;
+    if (interactionChoiceContent[Globals.WITH_CANCEL_KEY] == false && interactionChoiceContent[Globals.CHOICES_KEY].isEmpty){
+      print("Must have a choice if cancel choice is not present. Will block user.");
+      return null;
+    }
+    InteractionChoice interactionChoice = new InteractionChoice(interactionChoiceContent[Globals.ID_KEY]);
+    List<Choice> choices = new List<Choice>();
+    for (Map choiceContent in interactionChoiceContent[Globals.CHOICES_KEY]){
+      Choice choice = parseChoice(choiceContent);
+      if (choice != null)
+        choices.add(choice);
+    }
+    if (interactionChoiceContent[Globals.WITH_CANCEL_KEY])
+      choices.add(new Choice.cancel());
+    interactionChoice.choices = choices;
+    return interactionChoice;
+  }
+
+  static Choice parseChoice(Map choiceContent){
+    if (!GameDecoderHelper.isMandatoryKeyPresent(choiceContent, Globals.NAME_KEY))
+      return null;
+    choiceContent[Globals.APPLY_KEY] = GameDecoderHelper.toListSupportingString(choiceContent[Globals.APPLY_KEY]);
+    Choice choice = new Choice(choiceContent[Globals.NAME_KEY], choiceContent[Globals.TEXT_KEY]);
+    _toExecuteAtTheEnd.add((){
+      for (String applyContent in choiceContent[Globals.APPLY_KEY]){
+        choice.operations.add(new StoredOperation.fromString(applyContent));
+      }
+    });
+    return choice;
   }
 
 }

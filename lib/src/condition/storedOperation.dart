@@ -94,6 +94,9 @@ class StoredOperation {
         return DecodingHelper.generateObjectAction(varPart[1], "use");
       }
     }
+    else if (varPart[0].startsWith("provokeChoice(")){
+      return DecodingHelper.generateProvokeChoiceAction(varPart[0]);
+    }
     return null;
   }
 

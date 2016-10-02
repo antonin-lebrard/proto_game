@@ -102,6 +102,42 @@
         "id": "npc2"
       }
     ],
+    "interactionChoices": [
+      {
+        "id": "choices1",
+        "choices": [
+          {
+            "name": "choice1",
+            "apply": [
+              "npcs.npc1.npcProp2 = 'more nothing'",
+              "provokeChoice(choices2)"
+            ],
+            "text": "choice1"
+          },
+          {
+            "name": "choice2",
+            "apply": "provokeChoice(choices3)",
+            "text": "choice2"
+          }
+        ]
+      },
+      {
+        "id": "choices2",
+        "choices": {
+          "name": "blankChoice",
+          "text": "choice1-1"
+        },
+        "withCancel": false
+      },
+      {
+        "id": "choices3",
+        "choices": {
+          "name": "blankChoice",
+          "text": "choice2-1"
+        },
+        "withCancel": false
+      }
+    ],
     "currentRoomId": "start"
   }
 }

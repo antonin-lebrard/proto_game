@@ -8,3 +8,4 @@ import 'package:proto_game/src/room/room_entryPoint.dart';
 
 part 'npc.dart';
 part 'npcInteraction.dart';
+part 'interactionChoices.dart';

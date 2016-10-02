@@ -28,11 +28,15 @@ class Game {
 
   SplayTreeMap<num, Npc> npcStorage;
 
+  SplayTreeMap<num, InteractionChoice> interactionChoicesStorage;
+
   HashMap<String, dynamic> api = new HashMap<String, dynamic>();
 
   BaseGameObject getObjectById(String id) => objectStorage[id.hashCode];
 
   Npc getNpcById(String id) => npcStorage[id.hashCode];
+
+  InteractionChoice getInteractionChoiceById(String id) => interactionChoicesStorage[id.hashCode];
 
   set consumers(List<EventConsumer> consumers) {
     consumers.forEach((EventConsumer ec){

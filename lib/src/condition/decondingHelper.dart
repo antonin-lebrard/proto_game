@@ -153,4 +153,16 @@ class DecodingHelper {
     return () => object.executeAction(action);
   }
 
+  static Function generateProvokeChoiceAction(String functionCall){
+    String choiceId = DecodingHelper.extractFunctionParam(functionCall);
+    if (choiceId == null) return null;
+    InteractionChoice choice = Game.game.getInteractionChoiceById(choiceId);
+    if (choiceId == null) {
+      print("$choiceId id not found");
+      return null;
+    }
+    // TODO :
+    return () => null;
+  }
+
 }

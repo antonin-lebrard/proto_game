@@ -35,4 +35,8 @@ class Globals {
   static const String INTERACTIONS_KEY = 'interactions';
   static const String ACTION_NAME_KEY = 'actionName';
 
+  static const String INTERACTION_CHOICES_KEY = 'interactionChoices';
+  static const String CHOICES_KEY = 'choices';
+  static const String WITH_CANCEL_KEY = 'withCancel';
+
 }
