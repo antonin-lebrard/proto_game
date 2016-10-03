@@ -21,41 +21,79 @@ class ExpectedEventVariable extends HasValue {
 }
 
 class DecodingHelper {
-  static String _allOperators = "+-/*%=><?:";
+  static String _allOperatorsString = "+-/*%=><?:";
+  static List<int> _allOperators = [$plus, $minus, $division, $asterisk, $percent, $equal, $greater_than, $less_than, $question, $colon];
   static String _functionDelimiters = "()";
   static bool _stringMode = false;
   static bool _fromQuote = false;
-  static bool get isStringMode => _stringMode;
-  static stringMode(String fromLetter){
-    if (!_stringMode) _enableStringMode(fromLetter);
-    else _disableStringMode(fromLetter);
+  static stringMode(int fromChar){
+    if (!_stringMode) _enableStringMode(fromChar);
+    else _disableStringMode(fromChar);
   }
-  static _enableStringMode(String fromLetter){
+  static _enableStringMode(int char){
     _stringMode = true;
-    _fromQuote = (fromLetter == "'");
+    _fromQuote = (char == $quote);
   }
-  static _disableStringMode(String letter){
-    if ((_fromQuote && letter == "'") || (!_fromQuote && letter == '"')){
+  static _disableStringMode(int char){
+    if ((_fromQuote && char == $quote) || (!_fromQuote && char == $apostrophe)){
       _stringMode = false;
       _fromQuote = false;
     }
   }
-  static bool isOperator(String letter){
-    return _allOperators.contains(letter);
+  static bool isOperator(int char){
+    return _allOperators.contains(char);
+  }
+  static bool isOperatorString(String letter){
+    return _allOperatorsString.contains(letter);
   }
 
   static bool isFunction(String s){
     return _functionDelimiters.split('').every((String letter) => s.contains(letter));
   }
 
+  /// new version
   static void decompose(String s, Function onOperationPart){
+    s = s.trim();
+    String currentDecodingPart = "";
+    StringScanner scanner = new StringScanner(s);
+    while (!scanner.isDone) {
+      int char = scanner.readChar();
+      //String debug = new String.fromCharCode(char);
+      if (char == $quote || char == $apostrophe) {
+        DecodingHelper.stringMode(char);
+      }
+      if (!DecodingHelper._stringMode) {
+        if (char == $space) {
+          if (currentDecodingPart.length > 0)
+            onOperationPart(currentDecodingPart);
+          currentDecodingPart = "";
+          continue;
+        }
+        if (DecodingHelper.isOperator(char)){
+          if (currentDecodingPart.length > 0)
+            onOperationPart(currentDecodingPart);
+          currentDecodingPart = "";
+          List<int> charCodes = [char];
+          if (scanner.peekChar() == $equal){
+            charCodes.add(scanner.readChar());
+          }
+          onOperationPart(new String.fromCharCodes(charCodes));
+          continue;
+        }
+      }
+      currentDecodingPart += new String.fromCharCode(char);
+    }
+    onOperationPart(currentDecodingPart);
+  }
+  /// Saved old working version
+  /*static void decompose(String s, Function onOperationPart){
     s = s.trim();
     String currentDecodingPart = "";
     for (String letter in s.split('')){
       if (letter == "'" || letter == '"'){
         DecodingHelper.stringMode(letter);
       }
-      if (!DecodingHelper.isStringMode) {
+      if (!DecodingHelper._stringMode) {
         if (letter == " ") {
           onOperationPart(currentDecodingPart);
           currentDecodingPart = "";
@@ -65,7 +103,7 @@ class DecodingHelper {
       currentDecodingPart += letter;
     }
     onOperationPart(currentDecodingPart);
-  }
+  }*/
 
   static Operation decodeOperation(String s){
     switch(s){

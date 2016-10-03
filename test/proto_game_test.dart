@@ -177,7 +177,7 @@ void main() {
   });
 
   group("fonctional testing", (){
-    test("operation/condition", (){
+    test("operation/condition with spaces", (){
       String json = '''
       {
         "game": {
@@ -259,6 +259,92 @@ void main() {
 
       new StoredOperation.fromString("globals.boolGl = globals.numGl == 9").applyOperation();
       expect(boolGl.getValue(), isFalse);
+
+    });
+
+    test("operation/condition without spaces", (){
+      String json = '''
+      {
+        "game": {
+          "globals": [
+            {"name": "numGl", "type": "num", "value": 0 },
+            {"name": "stringGl", "type": "string", "value": "test" },
+            {"name": "boolGl", "type": "bool", "value": true }
+          ]
+        }
+      }
+      ''';
+      Game game = new GameDecoderJSON().readFromFormat(json, new TestingIo());
+      GlobalVariable numGl = game.globals.firstWhere((GlobalVariable g) => g.name == "numGl");
+      GlobalVariable strGl = game.globals.firstWhere((GlobalVariable g) => g.name == "stringGl");
+      GlobalVariable boolGl = game.globals.firstWhere((GlobalVariable g) => g.name == "boolGl");
+
+      new StoredOperation.fromString("globals.numGl=1+1").applyOperation();
+      expect(numGl.getValue(), equals(2));
+
+      new StoredOperation.fromString("globals.numGl+=1").applyOperation();
+      expect(numGl.getValue(), equals(3));
+
+      new StoredOperation.fromString("globals.numGl-=1").applyOperation();
+      expect(numGl.getValue(), equals(2));
+
+      new StoredOperation.fromString("globals.numGl=1-1").applyOperation();
+      expect(numGl.getValue(), equals(0));
+
+      new StoredOperation.fromString("globals.numGl=9/3").applyOperation();
+      expect(numGl.getValue(), equals(3));
+
+      new StoredOperation.fromString("globals.numGl/=3").applyOperation();
+      expect(numGl.getValue(), equals(1));
+
+      new StoredOperation.fromString("globals.numGl=3*3").applyOperation();
+      expect(numGl.getValue(), equals(9));
+
+      new StoredOperation.fromString("globals.numGl*=2").applyOperation();
+      expect(numGl.getValue(), equals(18));
+
+      new StoredOperation.fromString("globals.numGl=8%3").applyOperation();
+      expect(numGl.getValue(), equals(2));
+
+      new StoredOperation.fromString("globals.numGl%=2").applyOperation();
+      expect(numGl.getValue(), equals(0));
+
+      new StoredOperation.fromString("globals.numGl=true?3:8").applyOperation();
+      expect(numGl.getValue(), equals(3));
+
+      new StoredOperation.fromString("globals.numGl=false?3:8").applyOperation();
+      expect(numGl.getValue(), equals(8));
+
+      new StoredOperation.fromString("globals.boolGl=globals.numGl<9").applyOperation();
+      expect(boolGl.getValue(), isTrue);
+
+      new StoredOperation.fromString("globals.boolGl=globals.numGl<8").applyOperation();
+      expect(boolGl.getValue(), isFalse);
+
+      new StoredOperation.fromString("globals.boolGl=globals.numGl<=8").applyOperation();
+      expect(boolGl.getValue(), isTrue);
+
+      new StoredOperation.fromString("globals.boolGl=globals.numGl<=7").applyOperation();
+      expect(boolGl.getValue(), isFalse);
+
+      new StoredOperation.fromString("globals.boolGl=globals.numGl>7").applyOperation();
+      expect(boolGl.getValue(), isTrue);
+
+      new StoredOperation.fromString("globals.boolGl=globals.numGl>8").applyOperation();
+      expect(boolGl.getValue(), isFalse);
+
+      new StoredOperation.fromString("globals.boolGl=globals.numGl>=8").applyOperation();
+      expect(boolGl.getValue(), isTrue);
+
+      new StoredOperation.fromString("globals.boolGl=globals.numGl>=9").applyOperation();
+      expect(boolGl.getValue(), isFalse);
+
+      new StoredOperation.fromString("globals.boolGl=globals.numGl==8").applyOperation();
+      expect(boolGl.getValue(), isTrue);
+
+      new StoredOperation.fromString("globals.boolGl=globals.numGl==9").applyOperation();
+      expect(boolGl.getValue(), isFalse);
+
     });
   });
 }

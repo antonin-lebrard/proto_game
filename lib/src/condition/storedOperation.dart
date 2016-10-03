@@ -19,8 +19,11 @@ class StoredOperation {
   }
 
   _decodeOperationPart(String s){
-    if (s.length == 0) print("problem decoding operation part, operation part lenght == 0");
-    if (DecodingHelper.isOperator(s[0])){
+    if (s.length == 0) {
+      print("problem decoding operation part, operation part lenght == 0");
+      return;
+    }
+    if (DecodingHelper.isOperatorString(s[0])){
       Operation o = DecodingHelper.decodeOperation(s);
       if (o != null) operations.add(o);
       else print("problem decoding operator $s");
