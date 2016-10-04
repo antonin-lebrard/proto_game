@@ -29,5 +29,46 @@ class Operation {
   bool get isAssign => _isAssign;
   bool get isCondition => _isCondition;
   bool get isOperand => _isOperand;
+
+  String toString() {
+    if (this == EQUALS_TO)
+      return "==";
+    if (this == ASSIGN)
+      return "=";
+    if (this == MINUS)
+      return "-";
+    if (this == PLUS)
+      return "+";
+    if (this == DIVIDE)
+      return "/";
+    if (this == MULTIPLY)
+      return "*";
+    if (this == MODULO)
+      return "%";
+    if (this == SUPERIOR)
+      return ">";
+    if (this == INFERIOR)
+      return "<";
+    if (this == SUPERIOR_EQUALS)
+      return ">=";
+    if (this == INFERIOR_EQUALS)
+      return "<=";
+    if (this == PLUS_ASSIGN)
+      return "+=";
+    if (this == MINUS_ASSIGN)
+      return "-=";
+    if (this == DIVIDE_ASSIGN)
+      return "/=";
+    if (this == MULTIPLY_ASSIGN)
+      return "*=";
+    if (this == MODULO_ASSIGN)
+      return "%=";
+    if (this == CONDITIONAL)
+      return "?";
+    if (this == CONDITIONAL_SEPARATOR)
+      return ":";
+    return "unknown operator";
+}
+
 }
 

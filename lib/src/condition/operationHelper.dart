@@ -94,12 +94,12 @@ class OperationHelper {
       return;
     }
     if (!_processConditionalsOperations(variables, operations)) return;
-    int nbAssigns = operations.takeWhile((Operation elem) => elem.isAssign).length;
+    int nbAssigns = operations.where((Operation elem) => elem.isAssign).length;
     while (operations.length > 0){
       HasValue result = _doOperation(variables[variables.length - 2], operations.last, variables.last);
       if (result == null){
         print("Wrong operation : something wrong happened in the calculation");
-        if (nbAssigns != 0 && nbAssigns != operations.takeWhile((Operation elem) => elem.isAssign).length){
+        if (nbAssigns != 0 && nbAssigns != operations.where((Operation elem) => elem.isAssign).length){
           print("Sould propably exit game now, as assignements were made, propably corrupting variables");
         } else {
           print("no assignements made, could continue game, but you should probably check operations");
@@ -128,6 +128,23 @@ class OperationHelper {
       operations.removeLast();
     }
     return result.getValue();
+  }
+
+  static void optimizeOperation(List<dynamic> whole){
+    if (whole == null) return;
+    if (whole.length < 3) return;
+    for (int i = 1; i < whole.length - 1; i++){
+      if (whole[i] is Operation
+          && (whole[i] == Operation.PLUS || whole[i] == Operation.MINUS)
+          && whole[i-1] is Operation
+          && whole[i+1] is TempVariable<num>)
+      {
+        if (whole[i] == Operation.MINUS)
+          whole[i+1].applyValue(- whole[i+1].getValue());
+        whole.removeAt(i);
+        i--;
+      }
+    }
   }
 
 }

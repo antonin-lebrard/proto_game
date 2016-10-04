@@ -84,26 +84,8 @@ class DecodingHelper {
       currentDecodingPart += new String.fromCharCode(char);
     }
     onOperationPart(currentDecodingPart);
+    DecodingHelper._stringMode = false;
   }
-  /// Saved old working version
-  /*static void decompose(String s, Function onOperationPart){
-    s = s.trim();
-    String currentDecodingPart = "";
-    for (String letter in s.split('')){
-      if (letter == "'" || letter == '"'){
-        DecodingHelper.stringMode(letter);
-      }
-      if (!DecodingHelper._stringMode) {
-        if (letter == " ") {
-          onOperationPart(currentDecodingPart);
-          currentDecodingPart = "";
-          continue;
-        }
-      }
-      currentDecodingPart += letter;
-    }
-    onOperationPart(currentDecodingPart);
-  }*/
 
   static Operation decodeOperation(String s){
     switch(s){
