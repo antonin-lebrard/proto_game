@@ -35,6 +35,7 @@ main() {
   new EventsManager().emitEvent(new MoveEvent(test, test2));
 
   new StoredOperation.fromString("globals.numGl+=-1").applyOperation();
+  new StoredOperation.fromString("globals.numGl+=-globals.numGl").applyOperation();
 
   // meaningless line just to put breakpoint
   var x = 0;

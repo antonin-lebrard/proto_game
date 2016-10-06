@@ -88,7 +88,10 @@ class OperationHelper {
     return result;
   }
 
-  static void applyOperation(List<dynamic> whole){
+  static void applyOperation(List<dynamic> toCopy){
+    /// create a copy to de-reference toCopy, and not change it (toCopy.clone())
+    List<dynamic> whole = new List.from(toCopy);
+    optimizeOperationAtRuntime(whole);
     List<HasValue> variables = whole.where((var element) => element is HasValue).toList();
     List<Operation> operations = whole.where((var element) => element is Operation).toList();
     if (!_isValidOperation(variables, operations)){
@@ -113,7 +116,10 @@ class OperationHelper {
     }
   }
 
-  static bool applyCondition(List<dynamic> whole){
+  static bool applyCondition(List<dynamic> toCopy){
+    /// create a copy to de-reference toCopy, and not change it (toCopy.clone())
+    List<dynamic> whole = new List.from(toCopy);
+    optimizeOperationAtRuntime(whole);
     List<HasValue> variables = whole.where((var element) => element is HasValue).toList();
     List<Operation> operations = whole.where((var element) => element is Operation).toList();
     if (!_isValidCondition(variables, operations)){
@@ -134,7 +140,14 @@ class OperationHelper {
     return result.getValue();
   }
 
-  static void optimizeOperation(List<dynamic> whole){
+  /**
+   * For now, remove - or + Operator before a [TempVariable] if there is an operator before it
+   *
+   * Example : var += - 1 :
+   * will be represented as [var, +=, -, 1] before.
+   *                becomes [var, +=, -1] after
+   */
+  static void optimizeOperationAtParsing(List<dynamic> whole){
     if (whole == null) return;
     if (whole.length < 3) return;
     for (int i = 1; i < whole.length - 1; i++){
@@ -145,6 +158,29 @@ class OperationHelper {
       {
         if (whole[i] == Operation.MINUS)
           whole[i+1].applyValue(- whole[i+1].getValue());
+        whole.removeAt(i);
+        i--;
+      }
+    }
+  }
+
+  /**
+   * For now, remove - or + Operator before a [HasValue] if there is an operator before it
+   *
+   * Example : var += - 1 :
+   * will be represented as [var, +=, -, var2] before.
+   *                becomes [var, +=, -var2] after
+   */
+  static void optimizeOperationAtRuntime(List<dynamic> whole) {
+    if (whole == null) return;
+    if (whole.length < 3) return;
+    for (int i = 1; i < whole.length - 1; i++) {
+      if (whole[i] is Operation
+          && (whole[i] == Operation.PLUS || whole[i] == Operation.MINUS)
+          && whole[i - 1] is Operation
+          && whole[i + 1] is HasValue<num>) {
+        if (whole[i] == Operation.MINUS)
+          whole[i + 1] = new TempVariable<num>(-whole[i + 1].getValue());
         whole.removeAt(i);
         i--;
       }

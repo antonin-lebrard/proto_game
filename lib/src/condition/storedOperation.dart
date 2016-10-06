@@ -10,12 +10,12 @@ class StoredOperation {
 
   StoredOperation.fromString(String s){
     DecodingHelper.decompose(s, _decodeOperationPart);
-    OperationHelper.optimizeOperation(wholeOperation);
+    OperationHelper.optimizeOperationAtParsing(wholeOperation);
   }
 
   void applyOperation() {
     if (isFunction) toExecute();
-    else OperationHelper.applyOperation(wholeOperation.toList());
+    else OperationHelper.applyOperation(wholeOperation);
   }
 
   _decodeOperationPart(String s){

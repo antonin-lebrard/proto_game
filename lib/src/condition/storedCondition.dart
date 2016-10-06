@@ -9,12 +9,12 @@ class StoredCondition {
 
   StoredCondition.fromString(this.eventType, String condition) {
     DecodingHelper.decompose(condition, _decodeOperationPart);
-    OperationHelper.optimizeOperation(wholeCondition);
+    OperationHelper.optimizeOperationAtParsing(wholeCondition);
   }
 
   bool isConditionTrue(Event event){
     wholeCondition.where((var elem) => elem is ExpectedEventVariable).forEach((ExpectedEventVariable e) => e.resolveVariable(event));
-    bool result = OperationHelper.applyCondition(wholeCondition.toList());
+    bool result = OperationHelper.applyCondition(wholeCondition);
     // need to reset value of these variables, to not have reminiscence of old values at the next event
     wholeCondition.where((var elem) => elem is ExpectedEventVariable).forEach((ExpectedEventVariable e) => e.resetVariable());
     return result;
