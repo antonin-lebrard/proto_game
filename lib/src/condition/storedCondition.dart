@@ -5,18 +5,18 @@ class StoredCondition {
 
   Type eventType;
 
-  List<HasValue> variables = new List();
-  List<Operation> operations = new List();
+  List<dynamic> wholeCondition = new List();
 
   StoredCondition.fromString(this.eventType, String condition) {
     DecodingHelper.decompose(condition, _decodeOperationPart);
+    OperationHelper.optimizeOperation(wholeCondition);
   }
 
   bool isConditionTrue(Event event){
-    variables.where((HasValue elem) => elem is ExpectedEventVariable).forEach((ExpectedEventVariable e) => e.resolveVariable(event));
-    bool result = OperationHelper.applyCondition(variables.toList(), operations.toList());
+    wholeCondition.where((var elem) => elem is ExpectedEventVariable).forEach((ExpectedEventVariable e) => e.resolveVariable(event));
+    bool result = OperationHelper.applyCondition(wholeCondition.toList());
     // need to reset value of these variables, to not have reminiscence of old values at the next event
-    variables.where((HasValue elem) => elem is ExpectedEventVariable).forEach((ExpectedEventVariable e) => e.resetVariable());
+    wholeCondition.where((var elem) => elem is ExpectedEventVariable).forEach((ExpectedEventVariable e) => e.resetVariable());
     return result;
   }
 
@@ -27,12 +27,16 @@ class StoredCondition {
     }
     if (DecodingHelper.isOperatorString(s[0])){
       Operation o = DecodingHelper.decodeOperation(s);
-      if (o != null) operations.add(o);
+      if (o != null) {
+        wholeCondition.add(o);
+      }
       else print("problem decoding operator $s");
     }
     else {
       HasValue v = DecodingHelper.decodeTempVariable(s, _decodeVariable);
-      if (v != null) variables.add(v);
+      if (v != null){
+        wholeCondition.add(v);
+      }
       else print("problem decoding variable $s");
     }
   }
@@ -47,38 +51,6 @@ class StoredCondition {
     if (o != null) return o;
 
     return null;
-    /*try {
-      if (varPart[0] == "global" || varPart[0] == "globals") {
-        for (GlobalVariable g in Game.game.globals) {
-          if (g.name == varPart[1]) {
-            return g;
-          }
-        }
-      }
-      else if (varPart[0] == "player") {
-        if (varPart[1] == "properties") {
-          return Game.game.player.properties[varPart[2]];
-        }
-      }
-      else if (varPart[0] == "rooms") {
-        for (Room room in Game.game.player.plateau.rooms) {
-          if (room.name_id == varPart[1]) {
-            return new TempVariable(room);
-          }
-        }
-      }
-      else if (varPart[0] == "npcs") {
-        Npc npc = Game.game.getNpcByName(varPart[1]);
-        if (npc != null) {
-          if (varPart[2] == "properties"){
-            return npc.properties[varPart[3]];
-          }
-        }
-      }
-    } on IndexError {
-      return null;
-    }
-    return null;*/
   }
 
 }

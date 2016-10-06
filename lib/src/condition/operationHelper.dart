@@ -88,7 +88,9 @@ class OperationHelper {
     return result;
   }
 
-  static void applyOperation(List<HasValue> variables, List<Operation> operations){
+  static void applyOperation(List<dynamic> whole){
+    List<HasValue> variables = whole.where((var element) => element is HasValue).toList();
+    List<Operation> operations = whole.where((var element) => element is Operation).toList();
     if (!_isValidOperation(variables, operations)){
       print("Operation not valid");
       return;
@@ -111,7 +113,9 @@ class OperationHelper {
     }
   }
 
-  static bool applyCondition(List<HasValue> variables, List<Operation> operations){
+  static bool applyCondition(List<dynamic> whole){
+    List<HasValue> variables = whole.where((var element) => element is HasValue).toList();
+    List<Operation> operations = whole.where((var element) => element is Operation).toList();
     if (!_isValidCondition(variables, operations)){
       print("Operation not valid");
       return false;

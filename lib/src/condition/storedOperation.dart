@@ -2,8 +2,7 @@ part of proto_game.operation;
 
 class StoredOperation {
 
-  List<HasValue> variables = new List();
-  List<Operation> operations = new List();
+  List<dynamic> wholeOperation = new List();
 
   bool isFunction = false;
 
@@ -11,11 +10,12 @@ class StoredOperation {
 
   StoredOperation.fromString(String s){
     DecodingHelper.decompose(s, _decodeOperationPart);
+    OperationHelper.optimizeOperation(wholeOperation);
   }
 
   void applyOperation() {
     if (isFunction) toExecute();
-    else OperationHelper.applyOperation(variables.toList(), operations.toList());
+    else OperationHelper.applyOperation(wholeOperation.toList());
   }
 
   _decodeOperationPart(String s){
@@ -25,7 +25,9 @@ class StoredOperation {
     }
     if (DecodingHelper.isOperatorString(s[0])){
       Operation o = DecodingHelper.decodeOperation(s);
-      if (o != null) operations.add(o);
+      if (o != null) {
+        wholeOperation.add(o);
+      }
       else print("problem decoding operator $s");
     }
     else if (DecodingHelper.isFunction(s)){
@@ -38,7 +40,9 @@ class StoredOperation {
     }
     else {
       HasValue v = DecodingHelper.decodeTempVariable(s, _decodeVariable);
-      if (v != null) variables.add(v);
+      if (v != null) {
+        wholeOperation.add(v);
+      }
       else print("problem decoding variable $s");
     }
   }
@@ -50,32 +54,6 @@ class StoredOperation {
     if (o != null) return o;
 
     return null;
-
-    /*try {
-      if (varPart[0] == "global" || varPart[0] == "globals") {
-        for (GlobalVariable g in Game.game.globals) {
-          if (g.name == varPart[1]) {
-            return g;
-          }
-        }
-      }
-      else if (varPart[0] == "player") {
-        if (varPart[1] == "properties") {
-          return Game.game.player.properties[varPart[2]];
-        }
-      }
-      else if (varPart[0] == "npcs") {
-        Npc npc = Game.game.getNpcByName(varPart[1]);
-        if (npc != null) {
-          if (varPart[2] == "properties"){
-            return npc.properties[varPart[3]];
-          }
-        }
-      }
-    } on IndexError {
-      return null;
-    }
-    return null;*/
   }
 
   Function _decodeFunction(String s){
