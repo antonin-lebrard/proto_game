@@ -345,8 +345,12 @@ void main() {
       new StoredOperation.fromString("globals.boolGl=globals.numGl==9").applyOperation();
       expect(boolGl.getValue(), isFalse);
 
-      new StoredOperation.fromString("globals.numGl+=1")..applyOperation()..applyOperation();
-      expect(numGl.getValue(), equals(10));
+      new StoredOperation.fromString("globals.numGl+=-1")..applyOperation()..applyOperation();
+      expect(numGl.getValue(), equals(6));
+
+      // globals.numGl = - 6 + 6;
+      new StoredOperation.fromString("globals.numGl=-globals.numGl+globals.numGl").applyOperation();
+      expect(numGl.getValue(), equals(0));
     });
   });
 }

@@ -20,7 +20,7 @@ class ExpectedEventVariable extends HasValue {
 
 }
 
-class DecodingHelper {
+abstract class DecodingHelper {
   static String _allOperatorsString = "+-/*%=><?:";
   static List<int> _allOperators = [$plus, $minus, $division, $asterisk, $percent, $equal, $greater_than, $less_than, $question, $colon];
   static String _functionDelimiters = "()";
