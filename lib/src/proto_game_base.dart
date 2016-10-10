@@ -14,5 +14,6 @@ export 'package:proto_game/src/npc/npc_entryPoint.dart';
 export 'package:proto_game/src/player/player_entryPoint.dart';
 export 'package:proto_game/src/properties/properties_entryPoint.dart';
 export 'package:proto_game/src/room/room_entryPoint.dart';
+export 'package:proto_game/src/text/text_entryPoint.dart';
 export 'package:proto_game/src/timer/timer_entryPoint.dart';
 export 'package:proto_game/src/variables/variables_entryPoint.dart';

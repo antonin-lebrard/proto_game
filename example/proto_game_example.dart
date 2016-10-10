@@ -34,8 +34,10 @@ main() {
   new EventsManager().emitEvent(new MoveEvent(test, start));
   new EventsManager().emitEvent(new MoveEvent(test, test2));
 
-  new StoredOperation.fromString("globals.numGl+=-1").applyOperation();
   new StoredOperation.fromString("globals.numGl+=-globals.numGl").applyOperation();
+
+  Text t = new Text.fromString("(if:globals.boolGl==true)[true]\\n(else:)[false]");
+  print(t.getWholeText());
 
   // meaningless line just to put breakpoint
   var x = 0;
