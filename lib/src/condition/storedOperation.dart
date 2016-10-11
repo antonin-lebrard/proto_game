@@ -13,9 +13,9 @@ class StoredOperation {
     OperationHelper.optimizeOperationAtParsing(wholeOperation);
   }
 
-  void applyOperation() {
-    if (isFunction) toExecute();
-    else OperationHelper.applyOperation(wholeOperation);
+  dynamic applyOperation() {
+    if (isFunction) return toExecute();
+    else return OperationHelper.applyOperation(wholeOperation);
   }
 
   _decodeOperationPart(String s){

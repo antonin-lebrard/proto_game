@@ -88,7 +88,7 @@ class OperationHelper {
     return result;
   }
 
-  static void applyOperation(List<dynamic> toCopy){
+  static HasValue applyOperation(List<dynamic> toCopy){
     /// create a copy to de-reference toCopy, and not change it (toCopy.clone())
     List<dynamic> whole = new List.from(toCopy);
     optimizeOperationAtRuntime(whole);
@@ -96,12 +96,13 @@ class OperationHelper {
     List<Operation> operations = whole.where((var element) => element is Operation).toList();
     if (!_isValidOperation(variables, operations)){
       print("Operation not valid");
-      return;
+      return new TempVariable(null);
     }
-    if (!_processConditionalsOperations(variables, operations)) return;
+    if (!_processConditionalsOperations(variables, operations)) return new TempVariable(null);
     int nbAssigns = operations.where((Operation elem) => elem.isAssign).length;
+    HasValue result;
     while (operations.length > 0){
-      HasValue result = _doOperation(variables[variables.length - 2], operations.last, variables.last);
+      result = _doOperation(variables[variables.length - 2], operations.last, variables.last);
       if (result == null){
         print("Wrong operation : something wrong happened in the calculation");
         if (nbAssigns != 0 && nbAssigns != operations.where((Operation elem) => elem.isAssign).length){
@@ -109,11 +110,12 @@ class OperationHelper {
         } else {
           print("no assignements made, could continue game, but you should probably check operations");
         }
-        return;
+        return new TempVariable(null);
       }
       variables..removeLast()..removeLast()..add(result);
       operations.removeLast();
     }
+    return result;
   }
 
   static bool applyCondition(List<dynamic> toCopy){

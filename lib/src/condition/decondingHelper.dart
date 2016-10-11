@@ -51,8 +51,9 @@ abstract class DecodingHelper {
     return _functionDelimiters.split('').every((String letter) => s.contains(letter));
   }
 
-  /// new version
   static void decompose(String s, Function onOperationPart){
+    _stringMode = false;
+    _fromQuote = false;
     s = s.trim();
     String currentDecodingPart = "";
     StringScanner scanner = new StringScanner(s);

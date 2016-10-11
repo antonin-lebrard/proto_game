@@ -352,5 +352,31 @@ void main() {
       new StoredOperation.fromString("globals.numGl=-globals.numGl+globals.numGl").applyOperation();
       expect(numGl.getValue(), equals(0));
     });
+
+    test("text", (){
+
+      String json = '''
+      {
+        "game": {
+          "globals": [
+            {"name": "numGl", "type": "num", "value": 0 },
+            {"name": "stringGl", "type": "string", "value": "test" },
+            {"name": "boolGl", "type": "bool", "value": true }
+          ]
+        }
+      }
+      ''';
+      Game game = new GameDecoderJSON().readFromFormat(json, new TestingIo());
+      GlobalVariable numGl = game.globals.firstWhere((GlobalVariable g) => g.name == "numGl");
+      GlobalVariable strGl = game.globals.firstWhere((GlobalVariable g) => g.name == "stringGl");
+      GlobalVariable boolGl = game.globals.firstWhere((GlobalVariable g) => g.name == "boolGl");
+
+      Text t = new Text.fromString("(if:globals.boolGl==true)[boolGl is true]\\n(else:)[boolGl is false]");
+      expect(t.getWholeText(), equals("boolGl is true\\n"));
+
+      t = new Text.fromString(r"stringGl is equal to ${globals.stringGl}");
+      expect(t.getWholeText(), equals("stringGl is equal to test"));
+
+    });
   });
 }
