@@ -18,7 +18,7 @@ class CustomizableEventConsumer<E extends Event> extends EventConsumer {
   bool stopEvent;
   bool anyConditions;
 
-  String text;
+  Text text;
 
   CustomizableEventConsumer(String listenTo, {String text:"", bool stopEvent:false, bool anyConditions:false}){
     for (Type key in EventMappings.eventMappings.keys){
@@ -29,7 +29,7 @@ class CustomizableEventConsumer<E extends Event> extends EventConsumer {
     }
     this.stopEvent = stopEvent;
     this.anyConditions = anyConditions;
-    this.text = text;
+    this.text = new Text.fromString(text);
   }
 
   bool consume(Event event){

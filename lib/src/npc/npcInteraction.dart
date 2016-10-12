@@ -10,11 +10,11 @@ class NpcInteraction {
 
   bool anyConditions;
 
-  String text;
+  Text text;
 
   NpcInteraction(this.actionName, {bool anyConditions: false, String text: ""}){
     this.anyConditions = anyConditions;
-    this.text = text;
+    this.text = new Text.fromString(text);
   }
 
 }

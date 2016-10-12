@@ -24,11 +24,13 @@ class Choice {
 
   String name;
 
-  String text;
+  Text text;
 
   List<StoredOperation> operations = new List();
 
-  Choice(this.name, this.text);
+  Choice(this.name, String text) {
+    this.text = new Text.fromString(text);
+  }
 
   Choice.cancel() {
     this.name = "Cancel";

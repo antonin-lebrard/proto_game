@@ -8,9 +8,10 @@ class GameLinkIo {
 
   GameLinkIo(this.lowLevelIo);
 
-  void write(String text){
+  // TODO:
+  void write(Text text){
     if (text == null || text == "") return;
-    lowLevelIo.writeLine(text);
+    lowLevelIo.writeLine(text.getWholeText());
   }
 
   Future<Choice> presentChoices(List<Choice> choices) async {
