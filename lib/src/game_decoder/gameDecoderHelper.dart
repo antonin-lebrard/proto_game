@@ -25,7 +25,7 @@ class GameDecoderHelper {
 
   static String toStringSupportingList(var content){
     if (content == null) return "";
-    if (content is List<String>) content = content.join("\n");
+    if (content is List<String>) content = content.join("");
     if (content is String) return content;
     else {
       print("wrongly formatted, awaiting String or List, received : $content");

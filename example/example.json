@@ -89,7 +89,7 @@
           {
             "actionName": "talk",
             "conditions": "npcs.npc1.npcProp1 == 0", "apply": "npcs.npc1.npcProp1 += 1",
-            "text": "Hello You !"
+            "text": ["Hello"," You !"]
           },
           {
             "actionName": "talk",
