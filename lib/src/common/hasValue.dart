@@ -11,7 +11,10 @@ abstract class HasValue<T> {
 
   T getValue() => _value;
 
-  void applyValue(T other) { _value = other; }
+  void applyValue(var other) {
+    var applying = other is HasValue ? other.getValue() : other;
+    _value = applying;
+  }
 
   bool operator ==(other) {
     return other is HasValue ? getValue() == other.getValue() : false;

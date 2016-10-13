@@ -257,7 +257,7 @@ void main() {
       new StoredOperation.fromString("globals.boolGl = globals.numGl == 8").applyOperation();
       expect(boolGl.getValue(), isTrue);
 
-      new StoredOperation.fromString("globals.boolGl = globals.numGl == 9").applyOperation();
+      new StoredOperation.fromString("globals.boolGl = (globals.numGl == 9)").applyOperation();
       expect(boolGl.getValue(), isFalse);
 
     });

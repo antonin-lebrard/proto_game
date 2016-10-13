@@ -8,7 +8,7 @@ class StoredCondition {
   List<dynamic> wholeCondition = new List();
 
   StoredCondition.fromString(this.eventType, String condition) {
-    DecodingHelper.decompose(condition, _decodeOperationPart);
+    DecodingHelper.decompose(condition, _decodeOperationPart, _decodeNestedStoredOperation);
     OperationHelper.optimizeOperationAtParsing(wholeCondition);
   }
 
@@ -51,6 +51,10 @@ class StoredCondition {
     if (o != null) return o;
 
     return null;
+  }
+
+  _decodeNestedStoredOperation(String s){
+    wholeCondition.add(new StoredOperation.fromString(s));
   }
 
 }

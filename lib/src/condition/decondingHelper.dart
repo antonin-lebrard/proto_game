@@ -51,9 +51,18 @@ abstract class DecodingHelper {
     return _functionDelimiters.split('').every((String letter) => s.contains(letter));
   }
 
-  static void decompose(String s, Function onOperationPart){
+  /// linearly check [String] and check diverse conditions to find pseudoCode parts
+  ///
+  /// Should be called only when parsing the game
+  static void decompose(String s,
+      Function onOperationPart(String),
+      Function onNestedStoredOperation(String))
+  {
     _stringMode = false;
     _fromQuote = false;
+    bool nestedOperationMode = false;
+    String nestedOperationString = "";
+    int nestedParenthesisCount = 0;
     s = s.trim();
     String currentDecodingPart = "";
     StringScanner scanner = new StringScanner(s);
@@ -64,21 +73,45 @@ abstract class DecodingHelper {
         DecodingHelper.stringMode(char);
       }
       if (!DecodingHelper._stringMode) {
-        if (char == $space) {
-          if (currentDecodingPart.length > 0)
-            onOperationPart(currentDecodingPart);
-          currentDecodingPart = "";
-          continue;
-        }
-        if (DecodingHelper.isOperator(char)){
-          if (currentDecodingPart.length > 0)
-            onOperationPart(currentDecodingPart);
-          currentDecodingPart = "";
-          List<int> charCodes = [char];
-          if (scanner.peekChar() == $equal){
-            charCodes.add(scanner.readChar());
+        if (!nestedOperationMode) {
+          if (char == $space) {
+            if (currentDecodingPart.length > 0)
+              onOperationPart(currentDecodingPart);
+            currentDecodingPart = "";
+            continue;
           }
-          onOperationPart(new String.fromCharCodes(charCodes));
+          if (DecodingHelper.isOperator(char)) {
+            if (currentDecodingPart.length > 0)
+              onOperationPart(currentDecodingPart);
+            currentDecodingPart = "";
+            List<int> charCodes = [char];
+            if (scanner.peekChar() == $equal) {
+              charCodes.add(scanner.readChar());
+            }
+            onOperationPart(new String.fromCharCodes(charCodes));
+            continue;
+          }
+          if (char == $lparen){
+            int precChar = scanner.peekChar(-2);
+            if (precChar == $space || DecodingHelper.isOperator(precChar)) {
+              nestedOperationMode = true;
+              continue;
+            }
+          }
+        }
+        if (nestedOperationMode){
+          if (char == $rparen && nestedParenthesisCount == 0) {
+            if (nestedOperationString.length > 0)
+              onNestedStoredOperation(nestedOperationString);
+            nestedOperationString = "";
+            nestedOperationMode = false;
+            continue;
+          }
+          if (char == $lparen)
+            nestedParenthesisCount++;
+          if (char == $rparen)
+            nestedParenthesisCount--;
+          nestedOperationString += new String.fromCharCode(char);
           continue;
         }
       }

@@ -34,7 +34,7 @@ main() {
   new EventsManager().emitEvent(new MoveEvent(test, start));
   new EventsManager().emitEvent(new MoveEvent(test, test2));
 
-  new StoredOperation.fromString("globals.numGl+=-globals.numGl").applyOperation();
+  new StoredOperation.fromString("globals.boolGl = (globals.numGl == 9)").applyOperation();
 
   Text t = new Text.fromString("(if:globals.boolGl==true)[true]\\n(else:)[false]");
   print(t.getWholeText());

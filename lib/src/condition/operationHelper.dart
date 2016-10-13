@@ -5,8 +5,8 @@ class OperationHelper {
 
   static bool _isValidOperation(List<HasValue> variables, List<Operation> operations){
     if (!(variables.length == operations.length + 1)) return false;
-    if (!(operations.length > 0)) return false;
-    if (!(operations[0].isAssign)) return false;
+    //if (!(operations.length > 0)) return false;
+    //if (!(operations[0].isAssign)) return false;
     return true;
   }
 
@@ -14,7 +14,7 @@ class OperationHelper {
     if (!(variables.length == operations.length + 1)) return false;
     if (!(operations.length > 0)) return false;
     if (!(operations[0].isCondition)) return false;
-    if (operations.any((Operation elem) => elem.isAssign)) return false;
+    //if (operations.any((Operation elem) => elem.isAssign)) return false;
     return true;
   }
 
@@ -150,7 +150,16 @@ class OperationHelper {
    *                becomes [var, +=, -1] after
    */
   static void optimizeOperationAtParsing(List<dynamic> whole){
-    if (whole == null) return;
+    for (int i = 0; i < whole.length; i++){
+      if (whole[i] is StoredOperation){
+        if (whole[i].wholeOperation.length == 0){
+          whole.removeAt(i);
+          i--;
+        } else if (whole[i].wholeOperation.length == 1){
+          whole[i] = whole[i].wholeOperation[0];
+        }
+      }
+    }
     if (whole.length < 3) return;
     for (int i = 1; i < whole.length - 1; i++){
       if (whole[i] is Operation
@@ -174,7 +183,6 @@ class OperationHelper {
    *                becomes [var, +=, -var2] after
    */
   static void optimizeOperationAtRuntime(List<dynamic> whole) {
-    if (whole == null) return;
     if (whole.length < 3) return;
     for (int i = 1; i < whole.length - 1; i++) {
       if (whole[i] is Operation

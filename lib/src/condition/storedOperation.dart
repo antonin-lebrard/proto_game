@@ -1,6 +1,6 @@
 part of proto_game.operation;
 
-class StoredOperation {
+class StoredOperation implements HasValue {
 
   List<dynamic> wholeOperation = new List();
 
@@ -9,7 +9,7 @@ class StoredOperation {
   Function toExecute;
 
   StoredOperation.fromString(String s){
-    DecodingHelper.decompose(s, _decodeOperationPart);
+    DecodingHelper.decompose(s, _decodeOperationPart, _decodeNestedStoredOperation);
     OperationHelper.optimizeOperationAtParsing(wholeOperation);
   }
 
@@ -81,4 +81,13 @@ class StoredOperation {
     return null;
   }
 
+  _decodeNestedStoredOperation(String s){
+    wholeOperation.add(new StoredOperation.fromString(s));
+  }
+
+  void applyValue(other) {}
+
+  Type getType() => dynamic;
+
+  getValue() => this.applyOperation();
 }
