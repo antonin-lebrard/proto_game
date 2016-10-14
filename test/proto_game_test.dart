@@ -377,6 +377,12 @@ void main() {
       t = new Text.fromString(r"stringGl is equal to ${globals.stringGl}");
       expect(t.getWholeText(), equals("stringGl is equal to test"));
 
+      t = new Text.fromString(r"(if:globals.boolGl==true)[(if:globals.stringGl=='test')[(if:true==true)[true], test], boolGl is true](else:)[(if:true == true)[true], boolGl is false]");
+      expect(t.getWholeText(), equals("true, test, boolGl is true"));
+
+      t = new Text.fromString(r"(if:globals.boolGl==false)[(if:globals.stringGl=='test')[(if:true==true)[true], test], boolGl is true](else:)[(if:true == true)[true], boolGl is false]");
+      expect(t.getWholeText(), equals("true, boolGl is false"));
+
     });
   });
 }
