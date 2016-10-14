@@ -24,22 +24,22 @@ class Text {
     bool lastIfResult;
     for (var element in whole) {
       if (element is String)
-        wholeText += element + r"\n";
+        wholeText += element;
+      else if (element is HasValue)
+        wholeText += "${element.getValue()}";
       else if (element is IfText) {
         lastIfResult = element.condition.isConditionTrue(null);
-        if (lastIfResult) wholeText += element.text + r"\n";
+        if (lastIfResult)
+          wholeText += element.text.getWholeText();
       }
       else if (element is ElseText) {
-        if (!lastIfResult) wholeText += element.text + r"\n";
-      } else if (element is List) {
-        for (var subElement in element) {
-          if (subElement is String)
-            wholeText += subElement;
-          else if (subElement is HasValue)
-            wholeText += subElement.getValue();
-          else
-            wholeText += subElement;
+        if (!lastIfResult) {
+          wholeText += element.text.getWholeText();
+          lastIfResult = null;
         }
+      }
+      else {
+        wholeText += "$element";
       }
     }
     return wholeText;

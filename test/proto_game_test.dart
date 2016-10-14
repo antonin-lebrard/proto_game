@@ -157,8 +157,8 @@ void main() {
       expect(start.npcs.first.interactions.first.conditions.length, equals(1));
       expect(start.npcs.first.interactions.first.operations.length, equals(1));
       expect(start.npcs.first.interactions.last.conditions.length, equals(1));
-      expect(start.npcs.first.interactions.first.text.getWholeText(), equals("Hello You !\\n"));
-      expect(start.npcs.first.interactions.last.text.getWholeText(), equals("Welcome !\\n"));
+      expect(start.npcs.first.interactions.first.text.getWholeText(), equals("Hello You !"));
+      expect(start.npcs.first.interactions.last.text.getWholeText(), equals("Welcome !"));
     });
     test('decoding interactionChoices', (){
       expect(game.interactionChoicesStorage.length, equals(3));
@@ -167,7 +167,7 @@ void main() {
       expect(interactionChoice.id, equals('choices1'));
       expect(interactionChoice.choices.length, equals(3));
       expect(interactionChoice.choices.first.name, equals('choice1'));
-      expect(interactionChoice.choices.first.text.getWholeText(), equals('choice1\\n'));
+      expect(interactionChoice.choices.first.text.getWholeText(), equals('choice1'));
       expect(interactionChoice.choices.first.operations.length, equals(2));
       expect(interactionChoice.choices.last.name, equals('Cancel'));
       interactionChoice = game.getInteractionChoiceById('choices2');
