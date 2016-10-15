@@ -351,6 +351,13 @@ void main() {
       // globals.numGl = - 6 + 6;
       new StoredOperation.fromString("globals.numGl=-globals.numGl+globals.numGl").applyOperation();
       expect(numGl.getValue(), equals(0));
+
+      // globals.numGl = - 6 + 6;
+      new StoredOperation.fromString("globals.numGl=9").applyOperation();
+      expect(numGl.getValue(), equals(0));
+
+      new StoredOperation.fromString("globals.boolGl = -18 == -(globals.numGl + globals.numGl)").applyOperation();
+      expect(boolGl.getValue(), equals(true));
     });
 
     test("text", (){
