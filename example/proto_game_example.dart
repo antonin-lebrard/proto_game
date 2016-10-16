@@ -36,6 +36,8 @@ main() {
 
   // true is -80
   new StoredOperation.fromString("globals.boolGl = (globals.numGl == 9)").applyOperation();
+  StoredOperation so = new StoredOperation.fromString("globals.boolGl = -18 == -(globals.numGl + globals.numGl)");
+  so.applyOperation();
 
   Text t = new Text.fromString(r"(if:globals.boolGl==true)[true](else:)[false], value of boolGl is ${globals.boolGl}");
   print(t.getWholeText());

@@ -88,7 +88,7 @@ class OperationHelper {
     return result;
   }
 
-  static HasValue applyOperation(List<dynamic> toCopy){
+  static dynamic applyOperation(List<dynamic> toCopy){
     /// create a copy to de-reference toCopy, and not change it (toCopy.clone())
     List<dynamic> whole = new List.from(toCopy);
     optimizeOperationAtRuntime(whole);
@@ -115,7 +115,7 @@ class OperationHelper {
       variables..removeLast()..removeLast()..add(result);
       operations.removeLast();
     }
-    return result;
+    return result.getValue();
   }
 
   static bool applyCondition(List<dynamic> toCopy){
