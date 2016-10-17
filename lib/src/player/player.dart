@@ -1,6 +1,6 @@
 part of proto_game.player;
 
-class Player extends ExposedAPI {
+class Player implements ExposedAPI, HasProperties {
 
   String name = "Player";
 
@@ -16,12 +16,14 @@ class Player extends ExposedAPI {
     return properties;
   }
 
-  BaseProperty getProperty(String name){
+  BaseProperty getProperty(String name) => properties[name];
+
+  BaseProperty getFinalProperty(String name){
     if (properties[name] == null){
       print("Wrong name, property $name does not exist");
       return null;
     }
-    return new ModifiedProperty(properties[name], wearing);
+    return new ModifiedProperty(properties[name], wearing, this);
   }
 
   bool move(Direction direction){

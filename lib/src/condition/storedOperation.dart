@@ -13,9 +13,32 @@ class StoredOperation implements HasValue {
     OperationHelper.optimizeOperationAtParsing(wholeOperation);
   }
 
-  dynamic applyOperation() {
+  /// Create copy of other
+  ///
+  /// Can use [List.map] function as complementary way to handle [other] operation parts
+  StoredOperation.from(StoredOperation other, {dynamic map(dynamic element)}) {
+    if (!other.isFunction) {
+      if (map == null) map = (element) => element;
+      wholeOperation.addAll(other.wholeOperation.map(map));
+    } else {
+      print("Warning, pointless to use copy constructor for function Operation");
+      toExecute = other.toExecute;
+      isFunction = true;
+    }
+  }
+
+  dynamic applyOperation({HasProperties context: null}) {
     if (isFunction) return toExecute();
-    else return OperationHelper.applyOperation(wholeOperation);
+    else {
+      if (context != null) {
+        wholeOperation.where((element) => element is ExpectedContextVariable).forEach((ExpectedContextVariable v) => v.resolveVariable(context));
+      }
+      var result = OperationHelper.applyOperation(wholeOperation);
+      if (context != null) {
+        wholeOperation.where((element) => element is ExpectedContextVariable).forEach((ExpectedContextVariable v) => v.resetVariable());
+      }
+      return result;
+    }
   }
 
   _decodeOperationPart(String s){
@@ -50,9 +73,14 @@ class StoredOperation implements HasValue {
   HasValue _decodeVariable(String s) {
     List<String> varPart = s.split('.');
 
-    HasValue o = DecodingHelper.decodeGameAPIVariable(varPart);
-    if (o != null) return o;
-
+    if (varPart[0] == "context"){
+      HasValue o = DecodingHelper.decodeExpectedContextVariable(varPart);
+      if (o != null) return o;
+    }
+    else {
+      HasValue o = DecodingHelper.decodeGameAPIVariable(varPart);
+      if (o != null) return o;
+    }
     return null;
   }
 
@@ -85,7 +113,9 @@ class StoredOperation implements HasValue {
     wholeOperation.add(new StoredOperation.fromString(s));
   }
 
-  void applyValue(other) {}
+  void applyValue(other) {
+    throw "Cannot apply value to an operation";
+  }
 
   Type getType() => dynamic;
 

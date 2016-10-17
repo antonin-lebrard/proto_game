@@ -22,16 +22,16 @@ class BoolProperty extends BaseProperty<bool>{
 
 class ModifiedProperty extends BaseProperty {
 
-  ModifiedProperty(BaseProperty base, List<HasModifier> modifierContainers)
+  ModifiedProperty(BaseProperty base, List<HasModifier> modifierContainers, HasProperties context)
     : super(base.name, base.description, base.getValue())
   {
     if (modifierContainers != null) {
       modifierContainers.forEach((HasModifier modifierContainer) {
-        if (modifierContainer.getModifier().getModifiedValue(this) == null) {
+        if (modifierContainer.getModifier().getModifiedValue(this, context) == null) {
           print("Something wrong happened with property modifier : " + modifierContainer.getModifier().toString());
           return;
         }
-        super.applyValue(modifierContainer.getModifier().getModifiedValue(this));
+        super.applyValue(modifierContainer.getModifier().getModifiedValue(this, context));
       });
     }
   }

@@ -54,7 +54,7 @@ class BaseGameObject extends ExposedAPI implements HasDescription {
 
 class WearableGameObject extends BaseGameObject implements HasModifier {
 
-  BaseModifier modifier;
+  Modifier modifier;
 
   WearableGameObject(String name_id, String displayName, String description, Map<String, BaseProperty> properties, this.modifier) :
         super(name_id, displayName, description, properties) {}
@@ -65,7 +65,7 @@ class WearableGameObject extends BaseGameObject implements HasModifier {
     this.modifier = new NoModifier();
   }
 
-  BaseModifier getModifier() => modifier;
+  Modifier getModifier() => modifier;
 
   bool _executeAction(Event event){
     if (!super._executeAction(event)){
@@ -88,7 +88,7 @@ class WearableGameObject extends BaseGameObject implements HasModifier {
 
 class ConsumableGameObject extends BaseGameObject implements HasModifier {
 
-  BaseModifier modifier;
+  Modifier modifier;
 
   ConsumableGameObject(String name_id, String displayName, String description, Map<String, BaseProperty> properties, this.modifier)
     : super(name_id, displayName, description, properties)
@@ -101,7 +101,7 @@ class ConsumableGameObject extends BaseGameObject implements HasModifier {
     this.modifier = new NoModifier();
   }
 
-  BaseModifier getModifier() => modifier;
+  Modifier getModifier() => modifier;
 
   bool _executeAction(Event event){
     if (!super._executeAction(event)){

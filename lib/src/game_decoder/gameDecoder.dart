@@ -20,23 +20,19 @@ class GameDecoderJSON extends GameDecoderBase {
   Game readFromFormat(String content, LowLevelIo io){
     Map<String, dynamic> gameJson = JSON.decode(content)["game"];
     Game game = new Game(io);
-    game.objectStorage = parseObjects(gameJson[Globals.OBJECTS_KEY]);
-    game.npcStorage = parseNpcs(gameJson[Globals.NPCS_KEY]);
-    game.interactionChoicesStorage = parseInteractionChoices(gameJson[Globals.INTERACTION_CHOICES_KEY]);
+    if (gameJson[Globals.GLOBALS_KEY] != null) game.globals = parseGlobals(gameJson[Globals.GLOBALS_KEY]);
+    if (gameJson[Globals.OBJECTS_KEY] != null) game.objectStorage = parseObjects(gameJson[Globals.OBJECTS_KEY]);
+    if (gameJson[Globals.NPCS_KEY]    != null) game.npcStorage = parseNpcs(gameJson[Globals.NPCS_KEY]);
+    if (gameJson[Globals.INTERACTION_CHOICES_KEY] != null) game.interactionChoicesStorage = parseInteractionChoices(gameJson[Globals.INTERACTION_CHOICES_KEY]);
+    if (gameJson[Globals.EVENTS_KEY]  != null) game.consumers = parseConsumers(gameJson[Globals.EVENTS_KEY]);
+    if (gameJson[Globals.PLAYER_KEY]  != null) game.player = parsePlayer(gameJson[Globals.PLAYER_KEY]);
+    if (gameJson[Globals.PLATEAU_KEY] != null) game.player.plateau = parsePlateau(gameJson[Globals.PLATEAU_KEY], gameJson[Globals.CURRENT_ROOM_KEY]);
     for (String key in gameJson.keys){
       switch(key){
         case Globals.GLOBALS_KEY:
-          game.globals = parseGlobals(gameJson[key]);
-          break;
         case Globals.PLAYER_KEY:
-          game.player = parsePlayer(gameJson[key]);
-          break;
         case Globals.PLATEAU_KEY:
-          game.player.plateau = parsePlateau(gameJson[key], gameJson[Globals.CURRENT_ROOM_KEY]);
-          break;
         case Globals.EVENTS_KEY:
-          game.consumers = parseConsumers(gameJson[key]);
-          break;
         case Globals.TITLE_KEY:
         case Globals.VERSION_KEY:
         case Globals.CURRENT_ROOM_KEY:
@@ -172,6 +168,14 @@ class GameDecoderJSON extends GameDecoderBase {
         break;
     }
     return object;
+  }
+
+  static Modifier parseModifier(var modifiersContent){
+    modifiersContent = GameDecoderHelper.toListSupportingMap(modifiersContent);
+    CustomModifier modifier = new CustomModifier();
+    for (Map modifierContent in modifiersContent){
+
+    }
   }
 
   static Plateau parsePlateau(var plateauContent, var currentRoomId){
