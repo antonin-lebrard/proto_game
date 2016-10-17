@@ -44,7 +44,7 @@ class StoredCondition {
   HasValue _decodeVariable(String s) {
     List<String> varPart = s.split('.');
 
-    HasValue o = DecodingHelper.decodeExpectedVariable(varPart, eventType);
+    HasValue o = DecodingHelper.decodeExpectedEventVariable(varPart, eventType);
     if (o != null) return o;
 
     o = DecodingHelper.decodeGameAPIVariable(varPart);

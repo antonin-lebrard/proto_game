@@ -20,6 +20,18 @@ class ExpectedEventVariable extends HasValue {
 
 }
 
+class ExpectedContextVariable extends HasValue {
+
+  String name;
+
+  ExpectedContextVariable(this.name) : super(null);
+
+  void resolveVariable(HasProperties context) { applyValue(context.getProperty(name)); }
+
+  void resetVariable() { applyValue(null); }
+
+}
+
 abstract class DecodingHelper {
   static String _allOperatorsString = "+-/*%=><?:";
   static List<int> _allOperators = [$plus, $minus, $division, $asterisk, $percent, $equal, $greater_than, $less_than, $question, $colon];
@@ -160,7 +172,7 @@ abstract class DecodingHelper {
     return ifNotTemp(s);
   }
 
-  static ExpectedEventVariable decodeExpectedVariable(List<String> varPart, Type eventType){
+  static ExpectedEventVariable decodeExpectedEventVariable(List<String> varPart, Type eventType){
     if (eventType != null && varPart[0] == "param"){
       for (String key in EventMappings.eventMappings[eventType]['params'].keys){
         Type value = EventMappings.eventMappings[eventType]['params'][key];
@@ -170,6 +182,11 @@ abstract class DecodingHelper {
       }
     }
     return null;
+  }
+
+  static ExpectedContextVariable decodeExpectedContextVariable(List<String> varPart){
+    if (varPart.length != 2) return null;
+    return new ExpectedContextVariable(varPart[1]);
   }
 
   static HasValue decodeGameAPIVariable(List<String> varPart){
