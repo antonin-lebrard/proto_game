@@ -57,18 +57,18 @@ void main() {
     });
     test('decoding player', (){
       expect(game.player.name, equals("Sicile"));
-      expect(game.player.inventory.length, equals(1));
-      expect(game.player.inventory.first.name_id, equals("bag"));
+      expect(game.player.wearing.length, equals(1));
+      expect(game.player.wearing.first.name_id, equals("bag"));
       expect(game.player.properties.length, equals(2));
       expect(game.player.properties, contains("firstPropertyPlayer"));
       expect(game.player.properties, contains("secondPropertyPlayer"));
     });
     test('decoding objects', (){
-      expect(game.player.inventory.length, equals(1));
-      expect(game.player.inventory.first.name_id, equals("bag"));
-      expect(game.player.inventory.first, same(game.getObjectById("bag")));
-      expect(game.player.inventory.first, new isInstanceOf<WearableGameObject>());
-      expect(game.player.inventory.first.description, equals("placeholder bag \ndescription"));
+      expect(game.player.wearing.length, equals(1));
+      expect(game.player.wearing.first.name_id, equals("bag"));
+      expect(game.player.wearing.first, same(game.getObjectById("bag")));
+      expect(game.player.wearing.first, new isInstanceOf<WearableGameObject>());
+      expect(game.player.wearing.first.description, equals("placeholder bag \ndescription"));
       expect(start.objects.length, equals(1));
       expect(start.objects.first.name_id, equals("object1"));
       expect(start.objects.first.displayName, equals("nameObject1"));
