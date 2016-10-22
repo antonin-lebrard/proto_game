@@ -27,11 +27,12 @@ class ModifiedProperty extends BaseProperty {
   {
     if (modifierContainers != null) {
       modifierContainers.forEach((HasModifier modifierContainer) {
-        if (modifierContainer.getModifier().getModifiedValue(this, context) == null) {
+        var result = modifierContainer.getModifier().getModifiedValue(this, context);
+        if (result == null) {
           print("Something wrong happened with property modifier : " + modifierContainer.getModifier().toString());
-          return;
+          return; // = continue;
         }
-        super.applyValue(modifierContainer.getModifier().getModifiedValue(this, context));
+        super.applyValue(result);
       });
     }
   }

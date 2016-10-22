@@ -27,6 +27,10 @@ main() {
   Room test = game.player.plateau.rooms.firstWhere((Room elem) => elem.name_id == "test");
   Room test2 = game.player.plateau.rooms.firstWhere((Room elem) => elem.name_id == "test2");
 
+  print(game.player.getFinalProperty("firstPropertyPlayer").getValue());
+  print(game.player.getFinalProperty("firstPropertyPlayer").getValue());
+  print(game.player.getFinalProperty("secondPropertyPlayer").getValue());
+
   new EventsManager().emitEvent(new MoveEvent(start, test));
   new EventsManager().emitEvent(new MoveEvent(start, test));
   new EventsManager().emitEvent(new MoveEvent(start, test2));

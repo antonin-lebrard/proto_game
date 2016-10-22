@@ -22,6 +22,8 @@ class Globals {
   static const String INVENTORY_KEY = 'inventory';
   static const String WEARING_KEY = 'wearing';
 
+  static const String MODIFIER_KEY = 'modifier';
+
   static const String DIRECTION_KEY = 'direction';
   static const String OBJECTS_KEY = 'objects';
 

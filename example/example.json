@@ -8,7 +8,12 @@
       {"name": "boolGl", "type": "bool", "value": true }
     ],
     "objects": [
-      {"id": "bag", "name": "Bag", "type": "wearable", "description": "placeholder bag \ndescription" },
+      {"id": "bag", "name": "Bag", "type": "wearable", "description": "placeholder bag \ndescription",
+        "modifier": [
+          {"firstPropertyPlayer": "+10"},
+          {"secondPropertyPlayer": "-100"}
+        ]
+      },
       {"id": "object1", "name": "nameObject1", "type": "consumable", "description": "object1 \ndescription" },
       {"id": "object2", "name": "nameObject2", "description": "object2 \ndescription" }
     ],
@@ -18,7 +23,7 @@
         {"name": "firstPropertyPlayer", "type": "num", "value": 0 },
         {"name": "secondPropertyPlayer", "type": "num", "value": 100 }
       ],
-      "inventory": [
+      "wearing": [
         "bag"
       ]
     },
