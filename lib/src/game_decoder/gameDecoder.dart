@@ -152,16 +152,45 @@ class GameDecoderJSON extends GameDecoderBase {
     objectContent[Globals.PROPERTIES_KEY] = GameDecoderHelper.toListSupportingMap(objectContent[Globals.PROPERTIES_KEY]);
     objectContent[Globals.PROPERTIES_KEY] = parseProperties(objectContent[Globals.PROPERTIES_KEY]);
     objectContent[Globals.NAME_KEY] = objectContent[Globals.NAME_KEY] ?? objectContent[Globals.ID_KEY];
+    if (objectContent.containsKey(Globals.MODIFIER_KEY)) objectContent[Globals.MODIFIER_KEY] = parseModifier(objectContent[Globals.MODIFIER_KEY]);
     if (objectContent[Globals.TYPE_KEY] == null) objectContent[Globals.TYPE_KEY] = "base";
     switch(objectContent[Globals.TYPE_KEY]) {
       case "base":
-        object = new BaseGameObject(objectContent[Globals.ID_KEY], objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
+        object = new BaseGameObject(
+            objectContent[Globals.ID_KEY],
+            objectContent[Globals.NAME_KEY],
+            objectContent[Globals.DESCRIPTION_KEY],
+            objectContent[Globals.PROPERTIES_KEY]);
         break;
       case "wearable":
-        object = new WearableGameObject.noModifier(objectContent[Globals.ID_KEY], objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
+        if (objectContent.containsKey(Globals.MODIFIER_KEY))
+          object = new WearableGameObject(
+              objectContent[Globals.ID_KEY],
+              objectContent[Globals.NAME_KEY],
+              objectContent[Globals.DESCRIPTION_KEY],
+              objectContent[Globals.PROPERTIES_KEY],
+              objectContent[Globals.MODIFIER_KEY]);
+        else
+          object = new WearableGameObject.noModifier(
+              objectContent[Globals.ID_KEY],
+              objectContent[Globals.NAME_KEY],
+              objectContent[Globals.DESCRIPTION_KEY],
+              objectContent[Globals.PROPERTIES_KEY]);
         break;
       case "consumable":
-        object = new ConsumableGameObject.noModifier(objectContent[Globals.ID_KEY], objectContent[Globals.NAME_KEY], objectContent[Globals.DESCRIPTION_KEY], objectContent[Globals.PROPERTIES_KEY]);
+        if (objectContent.containsKey(Globals.MODIFIER_KEY))
+          object = new ConsumableGameObject(
+              objectContent[Globals.ID_KEY],
+              objectContent[Globals.NAME_KEY],
+              objectContent[Globals.DESCRIPTION_KEY],
+              objectContent[Globals.PROPERTIES_KEY],
+              objectContent[Globals.MODIFIER_KEY]);
+        else
+          object = new ConsumableGameObject.noModifier(
+              objectContent[Globals.ID_KEY],
+              objectContent[Globals.NAME_KEY],
+              objectContent[Globals.DESCRIPTION_KEY],
+              objectContent[Globals.PROPERTIES_KEY]);
         break;
       default:
         print("wrong type of object : ${objectContent[Globals.TYPE_KEY]}, will not be parsed");
@@ -174,8 +203,11 @@ class GameDecoderJSON extends GameDecoderBase {
     modifiersContent = GameDecoderHelper.toListSupportingMap(modifiersContent);
     CustomModifier modifier = new CustomModifier();
     for (Map modifierContent in modifiersContent){
-
+      modifierContent[modifierContent.keys.first] = "context.${modifierContent.keys.first}+=${modifierContent[modifierContent.keys.first]}";
+      StoredOperation modifierOp = new StoredOperation.fromString(modifierContent[modifierContent.keys.first]);
+      modifier.modifiers.putIfAbsent(modifierContent.keys.first, () => modifierOp);
     }
+    return modifier;
   }
 
   static Plateau parsePlateau(var plateauContent, var currentRoomId){
