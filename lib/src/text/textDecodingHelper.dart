@@ -25,9 +25,8 @@ abstract class TextDecodingHelper {
 
   static decompose(String s, Function addTextPart){
     int idxCondition = s.indexOf(_ifConditionOperator);
-    if (s.indexOf(_elseConditionOperator) < idxCondition) {
-      print("no 'if' statement before else statement, will be included as text instead :");
-      print(s);
+    if (s.indexOf(_elseConditionOperator) != -1 && s.indexOf(_elseConditionOperator) < idxCondition) {
+      Logger.log(new DecodingError(s, "no 'if' statement before else statement, will be included as text instead"));
     }
     while (idxCondition > -1) {
       _decodeTextAndGameVariables(s.substring(0, idxCondition), addTextPart);
@@ -37,7 +36,7 @@ abstract class TextDecodingHelper {
       s = s.substring(s.indexOf(_beginConditionText) + _beginConditionText.length);
       String text = _decodeNestedText(s);
       if (text == null) {
-        print("not closing 'if' statement, will not parse it and the rest of $s");
+        Logger.log(new DecodingError(s, "not closing 'if' statement by ')', will not parse it and the rest of"));
         return;
       }
       addTextPart(new IfText(conditionObj, new Text.fromString(text)));
@@ -50,7 +49,7 @@ abstract class TextDecodingHelper {
         s = s.substring(s.indexOf(_beginConditionText) + _beginConditionText.length);
         String text = _decodeNestedText(s);
         if (text == null) {
-          print("not closing 'else' statement, will not parse it and the rest of $s");
+          Logger.log(new DecodingError(s, "not closing 'else' statement by ), will not parse it and the rest of"));
           return;
         }
         addTextPart(new ElseText(new Text.fromString(text)));
