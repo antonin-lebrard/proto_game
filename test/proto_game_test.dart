@@ -100,7 +100,7 @@ void main() {
       expect(consumers.first.conditions.first.wholeCondition[1].isOperand, isFalse);
       expect(consumers.first.conditions.first.wholeCondition.first, new isInstanceOf<ExpectedEventVariable>());
       ExpectedEventVariable v = consumers.first.conditions.first.wholeCondition.first;
-      expect(v.name, equals("from"));
+      expect(v.nameParts[0], equals("from"));
       expect(v.expectedType, equals(Room));
       expect(consumers.first.conditions.first.wholeCondition[2], new isInstanceOf<TempVariable>());
       TempVariable t = consumers.first.conditions.first.wholeCondition[2];
@@ -112,7 +112,7 @@ void main() {
       expect(consumers.first.conditions[1].wholeCondition[1].isOperand, isFalse);
       expect(consumers.first.conditions[1].wholeCondition.first, new isInstanceOf<ExpectedEventVariable>());
       v = consumers.first.conditions[1].wholeCondition.first;
-      expect(v.name, equals("to"));
+      expect(v.nameParts[0], equals("to"));
       expect(v.expectedType, equals(Room));
       expect(consumers.first.conditions[1].wholeCondition[2], new isInstanceOf<TempVariable>());
       t = consumers.first.conditions[1].wholeCondition[2];

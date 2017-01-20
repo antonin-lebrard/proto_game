@@ -7,6 +7,8 @@ enum Direction {
   WEST,
   UP,
   DOWN,
+  IN,
+  OUT,
   NORTH_EAST,
   NORTH_WEST,
   SOUTH_EAST,

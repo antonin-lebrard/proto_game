@@ -25,8 +25,10 @@ abstract class TextDecodingHelper {
 
   static decompose(String s, Function addTextPart){
     int idxCondition = s.indexOf(_ifConditionOperator);
-    if (s.indexOf(_elseConditionOperator) < idxCondition)
-      print("no 'if' statement before else statement, will be included as text instead");
+    if (s.indexOf(_elseConditionOperator) < idxCondition) {
+      print("no 'if' statement before else statement, will be included as text instead :");
+      print(s);
+    }
     while (idxCondition > -1) {
       _decodeTextAndGameVariables(s.substring(0, idxCondition), addTextPart);
       s = s.substring(idxCondition + _ifConditionOperator.length);

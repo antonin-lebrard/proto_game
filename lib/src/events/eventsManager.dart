@@ -25,7 +25,14 @@ class EventsManager {
     List<EventConsumer> consumers = _consumers[event.runtimeType];
     if (consumers == null || consumers.length == 0)
       return false;
-    for (EventConsumer consumer in consumers){
+    List<EventConsumer> stoppingConsumers = consumers.where((EventConsumer e) => e.stopEvent).toList();
+    List<EventConsumer> nonStoppingConsumers = consumers.where((EventConsumer e) => !e.stopEvent).toList();
+    for (EventConsumer consumer in stoppingConsumers){
+      if (consumer.consume(event)){
+        return true;
+      }
+    }
+    for (EventConsumer consumer in nonStoppingConsumers){
       if (consumer.consume(event)){
         return true;
       }

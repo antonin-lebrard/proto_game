@@ -13,12 +13,15 @@ abstract class GameDecoderBase {
 
 class GameDecoderJSON extends GameDecoderBase {
 
+  //static List<String> _currentDeepnessPathJson = new List();
+
   static List<Function> _toExecuteAtTheEnd = new List();
 
   String writeToFormat(){return "null";}
 
   Game readFromFormat(String content, LowLevelIo io){
     Map<String, dynamic> gameJson = JSON.decode(content)["game"];
+    //_currentDeepnessPathJson.add("game");
     Game game = new Game(io);
     if (gameJson[Globals.GLOBALS_KEY] != null) game.globals = parseGlobals(gameJson[Globals.GLOBALS_KEY]);
     if (gameJson[Globals.OBJECTS_KEY] != null) game.objectStorage = parseObjects(gameJson[Globals.OBJECTS_KEY]);
@@ -41,7 +44,7 @@ class GameDecoderJSON extends GameDecoderBase {
         case Globals.INTERACTION_CHOICES_KEY:
           break;
         default:
-          print("wrong key found in json content : $key, will not be parsed");
+          Logger.log(new DecodingError(key, "wrong key found in json content : $key, will not be parsed"));
           break;
       }
     }
@@ -71,7 +74,7 @@ class GameDecoderJSON extends GameDecoderBase {
           global = new BooleanGlobalVariable(globalContent['name'], globalContent['value']);
           break;
         default:
-          print("wrong type of global : ${globalsContent[Globals.TYPE_KEY]}, will not be parsed");
+          Logger.log(new DecodingError(globalsContent[Globals.TYPE_KEY], "wrong type of global : ${globalsContent[Globals.TYPE_KEY]}, will not be parsed"));
           break;
       }
       if (global != null) globals.add(global);
@@ -81,7 +84,7 @@ class GameDecoderJSON extends GameDecoderBase {
 
   static Player parsePlayer(var playerContent){
     if (!(playerContent is Map)){
-      print("player is not formatted correctly, expected Map definition {}");
+      Logger.log(new DecodingError(playerContent, "player is not formatted correctly, expected Map definition {}"));
       return null;
     }
     Player player = new Player();
@@ -122,7 +125,7 @@ class GameDecoderJSON extends GameDecoderBase {
           property = new BoolProperty(propertyContent[Globals.NAME_KEY], propertyContent[Globals.DESCRIPTION_KEY], propertyContent[Globals.VALUE_KEY]);
           break;
         default:
-          print("wrong type of property : ${propertyContent[Globals.TYPE_KEY]}, will not be parsed");
+          Logger.log(new DecodingError(propertyContent[Globals.TYPE_KEY], "wrong type of property : ${propertyContent[Globals.TYPE_KEY]}, will not be parsed"));
           break;
       }
       if (property != null) propertiesMap[property.name] = property;
@@ -142,7 +145,7 @@ class GameDecoderJSON extends GameDecoderBase {
 
   static BaseGameObject parseObject(var objectContent) {
     if (!(objectContent is Map)) {
-      print("object is not formated correctly, will not be parsed. (Content not parsed : $objectContent)");
+      Logger.log(new DecodingError(objectContent, "object is not formated correctly, will not be parsed"));
       return null;
     }
     if (!GameDecoderHelper.isMandatoryKeyPresent(objectContent, Globals.ID_KEY))
@@ -193,7 +196,7 @@ class GameDecoderJSON extends GameDecoderBase {
               objectContent[Globals.PROPERTIES_KEY]);
         break;
       default:
-        print("wrong type of object : ${objectContent[Globals.TYPE_KEY]}, will not be parsed");
+        Logger.log(new DecodingError(objectContent[Globals.TYPE_KEY], "wrong type of object : ${objectContent[Globals.TYPE_KEY]}, will not be parsed"));
         break;
     }
     return object;
@@ -239,7 +242,7 @@ class GameDecoderJSON extends GameDecoderBase {
       var nextRoomsContent = roomContent[Globals.DIRECTION_KEY];
       if (nextRoomsContent != null) {
         if (!(nextRoomsContent is Map))
-          print("directions not correctly formated, expecting Map definition {}");
+          Logger.log(new DecodingError(nextRoomsContent, "directions not correctly formated, expecting Map definition {}"));
         else {
           Map<Direction, String> tempDirections = new Map();
           for (String key in nextRoomsContent.keys) {
@@ -262,10 +265,10 @@ class GameDecoderJSON extends GameDecoderBase {
         }
       }
       if (plateau.currentRoom == null)
-        print("warning, the room id specified by currentRoomId is not existent");
+        Logger.log(new DecodingError(currentRoomId, "warning, the room specified by the id $currentRoomId does not exist"));
     }
     if (plateau.currentRoom == null) {
-      print("current room set to the fisrt in the list of rooms");
+      Logger.log(new MessageError("current room set to the fisrt in the list of rooms"));
       plateau.currentRoom = plateau.getRooms()[0];
     }
     return plateau;
@@ -273,11 +276,12 @@ class GameDecoderJSON extends GameDecoderBase {
 
   static Direction parseDirection(var directionContent){
     if (!(directionContent is String)){
-      print("direction key is not a string : $directionContent, will not be parsed");
+      Logger.log(new DecodingError(directionContent, "direction key is not a string, will not be parsed"));
       return null;
     }
     Direction direction;
-    switch ((directionContent as String).toLowerCase().replaceAll(new RegExp("_-"), '')){
+    directionContent = (directionContent as String).toLowerCase().replaceAll(new RegExp(r"_|-"), '');
+    switch (directionContent){
       case "north":
       case "n":
         direction = Direction.NORTH;
@@ -295,26 +299,18 @@ class GameDecoderJSON extends GameDecoderBase {
         direction = Direction.EAST;
         break;
       case "northwest":
-      case "north-west":
-      case "north_west":
       case "nw":
         direction = Direction.NORTH_WEST;
         break;
       case "northeast":
-      case "north-east":
-      case "north_east":
       case "ne":
         direction = Direction.NORTH_EAST;
         break;
       case "southwest":
-      case "south-west":
-      case "south_west":
       case "sw":
         direction = Direction.SOUTH_WEST;
         break;
       case "southeast":
-      case "south-east":
-      case "south_east":
       case "se":
         direction = Direction.SOUTH_EAST;
         break;
@@ -326,8 +322,16 @@ class GameDecoderJSON extends GameDecoderBase {
       case "d":
         direction = Direction.DOWN;
         break;
+      case "in":
+      case "i":
+        direction = Direction.IN;
+        break;
+      case "out":
+      case "o":
+        direction = Direction.OUT;
+        break;
       default:
-        print("direction key is not an expected direction : $directionContent, will not be parsed");
+        Logger.log(new DecodingError(directionContent, "direction key is not an expected direction, will not be parsed"));
     }
     return direction;
   }
@@ -345,7 +349,7 @@ class GameDecoderJSON extends GameDecoderBase {
           }
         }
         if (linkRoom == null) {
-          print("warning, room id not existent, the link will not be parsed");
+          Logger.log(new DecodingError(linkingMap[room][dirKey], "warning! room specified by id ${linkingMap[room][dirKey]} does not exist, the link will not be parsed"));
           continue;
         } else {
           nextRooms[dirKey] = linkRoom;
@@ -368,9 +372,9 @@ class GameDecoderJSON extends GameDecoderBase {
       consumerContent[Globals.CONDITIONS_KEY] = GameDecoderHelper.toListSupportingString(consumerContent[Globals.CONDITIONS_KEY]);
       consumerContent[Globals.APPLY_KEY] = GameDecoderHelper.toListSupportingString(consumerContent[Globals.APPLY_KEY]);
       if (consumerContent[Globals.CONDITIONS_KEY].length == 0)
-      print("warning, event consumer without conditions, will consume each event it listens to");
+        Logger.log(new DecodingError(consumerContent.toString(), "warning, event consumer without conditions, will consume each event it listens to"));
       if (consumerContent[Globals.APPLY_KEY].length == 0)
-        print("no apply in event, event doing nothing, maybe not a good idea");
+        Logger.log(new DecodingError(consumerContent.toString(), "no apply in event, event doing nothing, maybe not a good idea"));
       consumerContent[Globals.TEXT_KEY] = GameDecoderHelper.toStringSupportingList(consumerContent[Globals.TEXT_KEY]);
       CustomizableEventConsumer consumer = new CustomizableEventConsumer(
           consumerContent[Globals.LISTEN_KEY],
@@ -427,7 +431,7 @@ class GameDecoderJSON extends GameDecoderBase {
     npc.wearing = parseInventory(npcContent[Globals.WEARING_KEY]);
     if (npcContent[Globals.INTERACTIONS_KEY] == null) {
       npcContent[Globals.INTERACTIONS_KEY] = new List();
-      print("no interactions with npc ${npcContent[Globals.NAME_KEY]}, possible mistake");
+      Logger.log(new DecodingError(npcContent.toString(), "no interactions with npc ${npcContent[Globals.NAME_KEY]}, possible mistake"));
     }
     List<NpcInteraction> interactions = new List();
     for (Map interactionContent in npcContent[Globals.INTERACTIONS_KEY]){
@@ -446,7 +450,7 @@ class GameDecoderJSON extends GameDecoderBase {
     interactionContent[Globals.CONDITIONS_KEY] = GameDecoderHelper.toListSupportingString(interactionContent[Globals.CONDITIONS_KEY]);
     interactionContent[Globals.APPLY_KEY] = GameDecoderHelper.toListSupportingString(interactionContent[Globals.APPLY_KEY]);
     if (interactionContent[Globals.CONDITIONS_KEY].length == 0)
-      print("warning, event consumer without conditions, will consume each event it listens to");
+      Logger.log(new DecodingError(interactionContent.toString(), "warning! Event consumer without conditions, will consume each event it listens to"));
     interactionContent[Globals.TEXT_KEY] = GameDecoderHelper.toStringSupportingList(interactionContent[Globals.TEXT_KEY]);
     NpcInteraction interaction = new NpcInteraction(
         interactionContent[Globals.ACTION_NAME_KEY],
@@ -482,7 +486,7 @@ class GameDecoderJSON extends GameDecoderBase {
     if (interactionChoiceContent[Globals.WITH_CANCEL_KEY] == null)
       interactionChoiceContent[Globals.WITH_CANCEL_KEY] = true;
     if (interactionChoiceContent[Globals.WITH_CANCEL_KEY] == false && interactionChoiceContent[Globals.CHOICES_KEY].isEmpty){
-      print("Must have a choice if cancel choice is not present. Will block user.");
+      Logger.log(new DecodingError(interactionChoiceContent.toString(), "Must have a choice if cancel choice is not present, will block user. Not parsed"));
       return null;
     }
     InteractionChoice interactionChoice = new InteractionChoice(interactionChoiceContent[Globals.ID_KEY]);
