@@ -25,7 +25,13 @@ class ExpectedEventVariable extends HasValue {
         Map<String, dynamic> exposedApi = evtVar.exposeAPI();
         if (evtVar is HasId)
           exposedApi = exposedApi[evtVar.getId()];
-
+        try {
+          evtVar = ExposedAPI.getVarFromPath(exposedApi, nameParts.sublist(1));
+          applyValue(evtVar);
+        } on ExposedAPIBrowsingException catch (e) {
+          Logger.log(new ExposedAPIBrowsingError(exposedApi, nameParts.sublist(1), e.stoppingKey));
+          applyValue(null);
+        }
       }
     }
   }

@@ -21,6 +21,23 @@ class DecodingError extends Error {
 
 }
 
+class ExposedAPIBrowsingError extends Error {
+
+  List<String> path;
+  String stoppingKey;
+  Map<String, dynamic> exposedAPI;
+
+  ExposedAPIBrowsingError(this.exposedAPI, this.path, this.stoppingKey);
+
+  String getError(){
+    return "Error browsing exposedAPI, the key ${path.join(".")} leads to nowhere:\n"
+        "ExposedAPI Object : $exposedAPI\n"
+        "Path: $path\n"
+        "Stopped at key: $stoppingKey";
+  }
+
+}
+
 class MessageError extends Error {
 
   String message;

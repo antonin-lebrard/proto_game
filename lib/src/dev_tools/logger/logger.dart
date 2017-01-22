@@ -2,6 +2,7 @@ library proto_game.logger;
 
 
 part 'error.dart';
+part 'exception.dart';
 
 
 enum LoggingLevel {
