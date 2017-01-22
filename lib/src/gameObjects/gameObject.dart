@@ -1,6 +1,6 @@
 part of proto_game.gameObjects;
 
-class BaseGameObject extends ExposedAPI implements HasDescription {
+class BaseGameObject implements ExposedAPI, HasDescription, HasId {
 
   String name_id;
 
@@ -49,6 +49,8 @@ class BaseGameObject extends ExposedAPI implements HasDescription {
   toString() => name_id;
 
   String getDescription() => this.description;
+
+  String getId() => name_id;
 
 }
 

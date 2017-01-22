@@ -9,12 +9,32 @@ class TempVariable<T> extends HasValue<T>{
 
 class ExpectedEventVariable extends HasValue {
 
-  String name;
+  List<String> nameParts;
   Type expectedType;
 
-  ExpectedEventVariable(this.name, this.expectedType) : super(null);
+  ExpectedEventVariable(this.nameParts, this.expectedType) : super(null);
 
-  void resolveVariable(Event event) { applyValue(event.properties[name]); }
+  void resolveVariable(Event event) {
+    // applying the object
+    if (nameParts.length == 1)
+      applyValue(event.properties[nameParts[0]]);
+    // trying to reach a property from the object
+    else {
+      var evtVar = event.properties[nameParts[0]];
+      if (evtVar is ExposedAPI) {
+        Map<String, dynamic> exposedApi = evtVar.exposeAPI();
+        if (evtVar is HasId)
+          exposedApi = exposedApi[evtVar.getId()];
+        try {
+          evtVar = ExposedAPI.getVarFromPath(exposedApi, nameParts.sublist(1));
+          applyValue(evtVar);
+        } on ExposedAPIBrowsingException catch (e) {
+          Logger.log(new ExposedAPIBrowsingError(exposedApi, nameParts.sublist(1), e.stoppingKey));
+          applyValue(null);
+        }
+      }
+    }
+  }
 
   void resetVariable() { applyValue(null); }
 
@@ -177,7 +197,7 @@ abstract class DecodingHelper {
       for (String key in EventMappings.eventMappings[eventType]['params'].keys){
         Type value = EventMappings.eventMappings[eventType]['params'][key];
         if (key == varPart[1]){
-          return new ExpectedEventVariable(key, value);
+          return new ExpectedEventVariable(varPart.sublist(1), value);
         }
       }
     }

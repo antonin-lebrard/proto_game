@@ -4,6 +4,8 @@ abstract class EventConsumer {
 
   Type listenTo;
 
+  bool stopEvent;
+
   EventConsumer();
 
   bool consume(Event event);
@@ -15,7 +17,6 @@ class CustomizableEventConsumer<E extends Event> extends EventConsumer {
   List<StoredCondition> conditions = new List();
   List<StoredOperation> operations = new List();
 
-  bool stopEvent;
   bool anyConditions;
 
   Text text;

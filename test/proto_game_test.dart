@@ -100,7 +100,7 @@ void main() {
       expect(consumers.first.conditions.first.wholeCondition[1].isOperand, isFalse);
       expect(consumers.first.conditions.first.wholeCondition.first, new isInstanceOf<ExpectedEventVariable>());
       ExpectedEventVariable v = consumers.first.conditions.first.wholeCondition.first;
-      expect(v.name, equals("from"));
+      expect(v.nameParts[0], equals("from"));
       expect(v.expectedType, equals(Room));
       expect(consumers.first.conditions.first.wholeCondition[2], new isInstanceOf<TempVariable>());
       TempVariable t = consumers.first.conditions.first.wholeCondition[2];
@@ -112,7 +112,7 @@ void main() {
       expect(consumers.first.conditions[1].wholeCondition[1].isOperand, isFalse);
       expect(consumers.first.conditions[1].wholeCondition.first, new isInstanceOf<ExpectedEventVariable>());
       v = consumers.first.conditions[1].wholeCondition.first;
-      expect(v.name, equals("to"));
+      expect(v.nameParts[0], equals("to"));
       expect(v.expectedType, equals(Room));
       expect(consumers.first.conditions[1].wholeCondition[2], new isInstanceOf<TempVariable>());
       t = consumers.first.conditions[1].wholeCondition[2];
@@ -388,6 +388,60 @@ void main() {
 
       t = new Text.fromString(r"(if:globals.boolGl==false)[(if:globals.stringGl=='test')[(if:true==true)[true], test], boolGl is true](else:)[(if:true == true)[true], boolGl is false]");
       expect(t.getWholeText(), equals("true, boolGl is false"));
+
+    });
+
+    test("expected variable resolving", (){
+
+      String json = '''
+      {
+        "game": {
+          "rooms": [
+            {
+              "id": "start", "name": "Start",
+              "direction": {
+                "north": "test"
+              },
+              "properties": [
+                {"name": "numStart", "type": "num", "value": 0 },
+                {"name": "boolStart", "type": "bool", "value": true }
+              ]
+            },
+            {
+              "id": "test", "name": "Test",
+              "direction": {
+                "south": "start"
+              },
+              "properties": [
+                {"name": "stringTest", "type": "string", "value": "test" }
+              ]
+            }
+          ],
+          "events": [
+            { "listenTo": "move",
+              "stopEvent": true,
+              "conditions": [
+                "param.from.numStart == 0",
+                "param.to.stringTest == 'test'",
+                "param.from.boolStart == true"
+              ],
+              "apply": [
+                "rooms.start.numStart = 1"
+              ],
+              "text": "this direction is blocked"
+            }
+          ]
+        }
+      }
+      ''';
+
+      Game game = new GameDecoderJSON().readFromFormat(json, new TestingIo());
+
+      Room start = game.player.plateau.rooms.firstWhere((Room elem) => elem.name_id == "start");
+      Room test = game.player.plateau.rooms.firstWhere((Room elem) => elem.name_id == "test");
+
+      new EventsManager().emitEvent(new MoveEvent(start, test));
+      expect(start.properties["numStart"].getValue(), equals(1));
 
     });
   });
