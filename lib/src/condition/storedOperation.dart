@@ -21,7 +21,7 @@ class StoredOperation implements HasValue {
       if (map == null) map = (element) => element;
       wholeOperation.addAll(other.wholeOperation.map(map));
     } else {
-      print("Warning, pointless to use copy constructor for function Operation");
+      Logger.log(new MessageError("Warning, pointless to use copy constructor for function Operation"));
       toExecute = other.toExecute;
       isFunction = true;
     }
@@ -43,7 +43,7 @@ class StoredOperation implements HasValue {
 
   _decodeOperationPart(String s){
     if (s.length == 0) {
-      print("problem decoding operation part, operation part lenght == 0");
+      Logger.log(new DecodingError(s, "problem decoding operation part, operation part lenght == 0"));
       return;
     }
     if (DecodingHelper.isOperatorString(s[0])){
@@ -51,7 +51,7 @@ class StoredOperation implements HasValue {
       if (o != null) {
         wholeOperation.add(o);
       }
-      else print("problem decoding operator $s");
+      else Logger.log(new DecodingError(s, "problem decoding operator"));
     }
     else if (DecodingHelper.isFunction(s)){
       Function f = _decodeFunction(s);
@@ -59,14 +59,14 @@ class StoredOperation implements HasValue {
         isFunction = true;
         toExecute = f;
       }
-      else print("problem decoding function $s");
+      else Logger.log(new DecodingError(s, "problem decoding function"));
     }
     else {
       HasValue v = DecodingHelper.decodeTempVariable(s, _decodeVariable);
       if (v != null) {
         wholeOperation.add(v);
       }
-      else print("problem decoding variable $s");
+      else Logger.log(new DecodingError(s, "problem decoding variable"));
     }
   }
 

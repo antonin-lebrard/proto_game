@@ -17,3 +17,14 @@ class ExposedAPIBrowsingException implements Exception {
   }
 
 }
+
+class NoIfBeforeElseException implements Exception {
+
+  const NoIfBeforeElseException();
+
+  String toString(){
+    return "Exception: Should never appear in console.\n"
+        "No 'if' statement before else statement";
+    }
+
+}

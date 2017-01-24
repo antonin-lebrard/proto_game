@@ -12,7 +12,7 @@ abstract class EventConsumer {
 
 }
 
-class CustomizableEventConsumer<E extends Event> extends EventConsumer {
+class CustomizableEventConsumer extends EventConsumer {
 
   List<StoredCondition> conditions = new List();
   List<StoredOperation> operations = new List();
@@ -21,16 +21,17 @@ class CustomizableEventConsumer<E extends Event> extends EventConsumer {
 
   Text text;
 
-  CustomizableEventConsumer(String listenTo, {String text:"", bool stopEvent:false, bool anyConditions:false}){
+  CustomizableEventConsumer(String listenTo, {bool stopEvent:false, bool anyConditions:false}){
     for (Type key in EventMappings.eventMappings.keys){
       if (EventMappings.eventMappings[key]['name'] == listenTo){
         this.listenTo = key;
         break;
       }
     }
+    if (listenTo == null)
+      Logger.log(new DecodingError(listenTo, "Type of event specified in 'listenTo' field does not exists, will lead to numerous errors"));
     this.stopEvent = stopEvent;
     this.anyConditions = anyConditions;
-    this.text = new Text.fromString(text);
   }
 
   bool consume(Event event){
@@ -43,7 +44,7 @@ class CustomizableEventConsumer<E extends Event> extends EventConsumer {
       for (StoredOperation o in operations) {
         o.applyOperation();
       }
-      Game.game.gameLinkIo.write(text);
+      Game.game.gameLinkIo.write(text, event);
       return stopEvent;
     }
     return false;

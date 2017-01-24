@@ -22,7 +22,7 @@ class StoredCondition {
 
   _decodeOperationPart(String s) {
     if (s.length == 0) {
-      print("problem decoding operation part, operation part lenght == 0");
+      Logger.log(new DecodingError(s, "problem decoding operation part, operation part lenght == 0"));
       return;
     }
     if (DecodingHelper.isOperatorString(s[0])){
@@ -30,14 +30,14 @@ class StoredCondition {
       if (o != null) {
         wholeCondition.add(o);
       }
-      else print("problem decoding operator $s");
+      else Logger.log(new DecodingError(s, "problem decoding operator"));
     }
     else {
       HasValue v = DecodingHelper.decodeTempVariable(s, _decodeVariable);
       if (v != null){
         wholeCondition.add(v);
       }
-      else print("problem decoding variable $s");
+      else Logger.log(new DecodingError(s, "problem decoding variable"));
     }
   }
 

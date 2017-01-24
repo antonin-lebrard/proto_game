@@ -174,7 +174,7 @@ abstract class DecodingHelper {
       case "?" : return Operation.CONDITIONAL;
       case ":" : return Operation.CONDITIONAL_SEPARATOR;
       default  :
-        print("problem decoding event apply, wrong assumption made $s not an operation");
+        Logger.log(new DecodingError(s, "problem decoding event apply, wrong assumption made $s not an operation"));
         return null;
     }
   }
@@ -214,7 +214,7 @@ abstract class DecodingHelper {
     for (String part in varPart) {
       currentNodeAPI = currentNodeAPI[part];
       if (currentNodeAPI == null) {
-        print("api variable not found : $varPart");
+        Logger.log(new DecodingError(varPart.toString(), "api variable not found"));
         break;
       }
     }
@@ -227,7 +227,7 @@ abstract class DecodingHelper {
 
   static String extractFunctionParam(String s){
     if (!isFunction(s)){
-      print("problem extracting param from $s");
+      Logger.log(new DecodingError(s, "problem extracting param"));
       return null;
     }
     return s.substring(s.indexOf("(")+1, s.indexOf(")"));
@@ -238,7 +238,7 @@ abstract class DecodingHelper {
     if (objectId == null) return null;
     BaseGameObject object = Game.game.getObjectById(objectId);
     if (object == null) {
-      print("$objectId id not found");
+      Logger.log(new DecodingError(objectId, "objectId not found"));
       return null;
     }
     return () => object.executeAction(action);
@@ -249,7 +249,7 @@ abstract class DecodingHelper {
     if (choiceId == null) return null;
     InteractionChoice choice = Game.game.getInteractionChoiceById(choiceId);
     if (choiceId == null) {
-      print("$choiceId id not found");
+      Logger.log(new DecodingError(choiceId, "choiceId not found"));
       return null;
     }
     return () => choice.execute();

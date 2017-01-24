@@ -378,11 +378,11 @@ class GameDecoderJSON extends GameDecoderBase {
       consumerContent[Globals.TEXT_KEY] = GameDecoderHelper.toStringSupportingList(consumerContent[Globals.TEXT_KEY]);
       CustomizableEventConsumer consumer = new CustomizableEventConsumer(
           consumerContent[Globals.LISTEN_KEY],
-          text: consumerContent[Globals.TEXT_KEY],
           stopEvent: consumerContent[Globals.STOP_EVENT_KEY],
           anyConditions: consumerContent[Globals.ANY_CONDITION_KEY]
       );
       _toExecuteAtTheEnd.add((){
+        consumer.text = new Text.fromString(consumerContent[Globals.TEXT_KEY], consumer.listenTo);
         for (String condition in consumerContent[Globals.CONDITIONS_KEY]){
           consumer.conditions.add(new StoredCondition.fromString(consumer.listenTo, condition));
         }
