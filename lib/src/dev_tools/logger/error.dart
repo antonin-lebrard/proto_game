@@ -3,18 +3,20 @@ part of proto_game.logger;
 
 abstract class Error {
 
-  String getError();
+  const Error();
+
+  String toString();
 
 }
 
 class DecodingError extends Error {
 
-  String textContainingError;
-  String errorMessage;
+  final String textContainingError;
+  final String errorMessage;
 
-  DecodingError(this.textContainingError, this.errorMessage);
+  const DecodingError(this.textContainingError, this.errorMessage);
 
-  String getError(){
+  String toString(){
     String toReturn = this.errorMessage + ":\n" + this.textContainingError;
     return toReturn;
   }
@@ -23,13 +25,13 @@ class DecodingError extends Error {
 
 class ExposedAPIBrowsingError extends Error {
 
-  List<String> path;
-  String stoppingKey;
-  Map<String, dynamic> exposedAPI;
+  final List<String> path;
+  final String stoppingKey;
+  final Map<String, dynamic> exposedAPI;
 
-  ExposedAPIBrowsingError(this.exposedAPI, this.path, this.stoppingKey);
+  const ExposedAPIBrowsingError(this.exposedAPI, this.path, this.stoppingKey);
 
-  String getError(){
+  String toString(){
     return "Error browsing exposedAPI, the key ${path.join(".")} leads to nowhere:\n"
         "ExposedAPI Object : $exposedAPI\n"
         "Path: $path\n"
@@ -38,13 +40,53 @@ class ExposedAPIBrowsingError extends Error {
 
 }
 
+class RuntimeError extends Error {
+
+  final Object object;
+  final String errorMessage;
+
+  const RuntimeError(this.object, this.errorMessage);
+
+  String toString(){
+    return this.errorMessage + ":\n" + this.object.toString() +
+        "\n(Attempt at calling toString() on object causing error, can print 'Instance of [runtimeType of object]' if toString() is not implemented";
+  }
+
+}
+
+class ShouldBeError extends Error {
+
+  final Object object;
+  final String shouldBeMessage;
+
+  const ShouldBeError(this.object, this.shouldBeMessage);
+
+  String toString(){
+    return "$object should be $shouldBeMessage";
+  }
+
+}
+
+class ShouldBeListOrError extends Error {
+
+  final List<Object> list;
+  final String shouldBeMessage;
+
+  const ShouldBeListOrError(this.list, this.shouldBeMessage);
+
+  String toString(){
+    return this.list.join(", or ") + "should be $shouldBeMessage";
+  }
+
+}
+
 class MessageError extends Error {
 
-  String message;
+  final String message;
 
-  MessageError(this.message);
+  const MessageError(this.message);
 
-  String getError(){
+  String toString(){
     return message;
   }
 

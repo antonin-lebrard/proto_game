@@ -8,7 +8,7 @@ class GameDecoderHelper {
     if (content is Map) content = new List()..add(content);
     if (content is List) return content;
     else {
-      print("wrongly formatted, awaiting List or Map, received : $content");
+      Logger.log(new DecodingError(content, "wrongly formatted, awaiting List or Map"));
       return new List();
     }
   }
@@ -18,7 +18,7 @@ class GameDecoderHelper {
     if (content is String) content = new List()..add(content);
     if (content is List) return content;
     else {
-      print("wrongly formatted, awaiting List or String, received : $content");
+      Logger.log(new DecodingError(content, "wrongly formatted, awaiting List or String"));
       return new List();
     }
   }
@@ -28,14 +28,14 @@ class GameDecoderHelper {
     if (content is List<String>) content = content.join("");
     if (content is String) return content;
     else {
-      print("wrongly formatted, awaiting String or List, received : $content");
+      Logger.log(new DecodingError(content, "wrongly formatted, awaiting String or List"));
       return "";
     }
   }
 
   static bool isMandatoryKeyPresent(Map content, String key){
     if (content[key] == null){
-      print("$key not specified, will not be parsed : $content");
+      Logger.log(new DecodingError(content.toString(), "$key not specified, will not be parsed"));
       return false;
     }
     return true;

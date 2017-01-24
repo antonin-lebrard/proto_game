@@ -13,18 +13,24 @@ class OperationHelper {
   static bool _isValidCondition(List<HasValue> variables, List<Operation> operations){
     if (!(variables.length == operations.length + 1)) return false;
     if (!(operations.length > 0)) return false;
-    if (!(operations[0].isCondition)) return false;
+    if (!(operations[0].isCondition || operations[0] == Operation.CONDITIONAL)) return false;
     //if (operations.any((Operation elem) => elem.isAssign)) return false;
     return true;
   }
 
   static bool _isValidConditionalOperation(List<HasValue> variables, List<Operation> operations, int i){
-    if (i == 0 || (!operations[i-1].isCondition && !(variables[i].getValue() is bool))){
-      print("Wrong operation : not a condition before '?' operator");
+    // TODO: Very demanding, can launch series of unnecessary nested computation with nested StoredOperation
+    if (i == 0 && variables[0].getType() != true.runtimeType){
+      Logger.log(new ShouldBeError(variables[0].getType(), "a boolean instance"));
       return false;
     }
+    // TODO: Very demanding, same here
+    if (i != 0 && !operations[i-1].isCondition && !(variables[i].getValue() is bool)){
+        Logger.log(new ShouldBeListOrError([operations[i-1], variables[i].getValue()], "operation returning a boolean"));
+        return false;
+    }
     if (i == operations.length || operations[i+1] != Operation.CONDITIONAL_SEPARATOR){
-      print("Wrong operation : no conditional separator ':' after '?' operator");
+      Logger.log(new ShouldBeError(operations[i+1], "a conditional operator ':', after a '?' operator"));
       return false;
     }
     return true;
@@ -45,7 +51,7 @@ class OperationHelper {
           keptVariable = variables[i].getValue() ? variables[i+1] : variables[i+2];
         }
         if (keptVariable == null){
-          print("Wrong operation : something wrong happened : $variables : $operations");
+          Logger.log(new MessageError("something wrong happened : $variables : $operations"));
           return false;
         }
         int startRemoveRange = twoVariableCondition ? i-1 : i;
@@ -95,7 +101,7 @@ class OperationHelper {
     List<HasValue> variables = whole.where((var element) => element is HasValue).toList();
     List<Operation> operations = whole.where((var element) => element is Operation).toList();
     if (!_isValidOperation(variables, operations)){
-      print("Operation not valid");
+      Logger.log(new RuntimeError(whole, "not a valid written computation"));
       return new TempVariable(null);
     }
     if (!_processConditionalsOperations(variables, operations)) return new TempVariable(null);
@@ -104,11 +110,11 @@ class OperationHelper {
     while (operations.length > 0){
       result = _doOperation(variables[variables.length - 2], operations.last, variables.last);
       if (result == null){
-        print("Wrong operation : something wrong happened in the calculation");
+        Logger.log(new RuntimeError(whole, "something wrong happened in the calculation, the operations seems to be not correct or supported"));
         if (nbAssigns != 0 && nbAssigns != operations.where((Operation elem) => elem.isAssign).length){
-          print("Sould propably exit game now, as assignements were made, propably corrupting variables");
+          Logger.log(new MessageError("Sould propably exit game now, as assignements were made, propably corrupting variables"));
         } else {
-          print("no assignements made, could continue game, but you should probably check operations");
+          Logger.log(new MessageError("no assignements made, could continue game, but you should probably check written computation"));
         }
         return new TempVariable(null);
       }
@@ -125,7 +131,7 @@ class OperationHelper {
     List<HasValue> variables = whole.where((var element) => element is HasValue).toList();
     List<Operation> operations = whole.where((var element) => element is Operation).toList();
     if (!_isValidCondition(variables, operations)){
-      print("Operation not valid");
+      Logger.log(new RuntimeError(whole, "not a valid written condition"));
       return false;
     }
     if (!_processConditionalsOperations(variables, operations)) return false;
@@ -133,7 +139,7 @@ class OperationHelper {
     while (operations.length > 0){
       result = _doOperation(variables[variables.length - 2], operations.last, variables.last);
       if (result == null){
-        print("Wrong operation : something wrong happened in the calculation");
+        Logger.log(new RuntimeError(whole, "something wrong happened in the calculation, the operations seems to be not correct or supported"));
         return false;
       }
       variables..removeLast()..removeLast()..add(result);

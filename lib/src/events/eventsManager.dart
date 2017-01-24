@@ -44,7 +44,7 @@ class EventsManager {
     if (_consumers.containsKey(eventType)) {
       _consumers[eventType].add(consumer);
     } else {
-      print("Warning : eventType does not exist");
+      Logger.log(new RuntimeError(eventType, "Warning : eventType does not exist"));
     }
   }
 

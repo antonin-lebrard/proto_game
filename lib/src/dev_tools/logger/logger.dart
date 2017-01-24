@@ -16,7 +16,7 @@ class Logger {
 
   static log(Error error) {
     if (CURRENT_LOGGING_LEVEL == LoggingLevel.ALL){
-      print(error.getError());
+      print(error);
     }
   }
 

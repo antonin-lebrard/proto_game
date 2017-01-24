@@ -19,11 +19,11 @@ class BaseGameObject implements ExposedAPI, HasDescription, HasId {
   bool executeAction(String action){
     Function eventCreator = EventMappings.getEventCreatorFromName(action);
     if (eventCreator == null) {
-      print("wrong action name, no event mapped on $action, or object not supporting $action");
+      Logger.log(new RuntimeError(action, "wrong action name, no event mapped on $action, or object not supporting $action"));
       return false;
     }
     Event evt = eventCreator(this);
-    if (new EventsManager().emitEvent(evt))
+    if (new EventsManager().emitEvent(evt)) // stopping event
       return false;
     return _executeAction(evt);
   }

@@ -114,7 +114,7 @@ class StoredOperation implements HasValue {
   }
 
   void applyValue(other) {
-    throw "Cannot apply value to an operation";
+    throw "Cannot apply value to a StoredOperation";
   }
 
   Type getType() => dynamic;

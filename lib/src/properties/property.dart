@@ -29,7 +29,7 @@ class ModifiedProperty extends BaseProperty {
       modifierContainers.forEach((HasModifier modifierContainer) {
         var result = modifierContainer.getModifier().getModifiedValue(this, context);
         if (result == null) {
-          print("Something wrong happened with property modifier : " + modifierContainer.getModifier().toString());
+          Logger.log(new RuntimeError(modifierContainer.getModifier(), "Something wrong happened with property modifier"));
           return; // = continue;
         }
         super.applyValue(result);
@@ -39,7 +39,7 @@ class ModifiedProperty extends BaseProperty {
 
   @override
   void applyValue(other){
-    print("Warning : not supposed to change value of ModifiedProperty, do nothing");
+    Logger.log(new MessageError("Not supposed to change value of ModifiedProperty, do nothing"));
   }
 
 }

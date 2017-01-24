@@ -357,6 +357,10 @@ void main() {
 
       new StoredOperation.fromString("globals.boolGl = -18 == -(globals.numGl + globals.numGl)").applyOperation();
       expect(boolGl.getValue(), equals(true));
+
+      new StoredOperation.fromString("globals.boolGl = globals.boolGl ? (globals.boolGl ? true : false) : false").applyOperation();
+      expect(boolGl.getValue(), equals(true));
+
     });
 
     test("text", (){

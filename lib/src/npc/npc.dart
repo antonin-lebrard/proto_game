@@ -19,7 +19,7 @@ class Npc implements ExposedAPI, HasProperties, HasDescription, HasId {
 
   BaseProperty getFinalProperty(String name) {
     if (properties[name] == null) {
-      print("Wrong name, property $name does not exist");
+      Logger.log(new MessageError("Wrong name, property $name does not exist in npc $name_id"));
       return null;
     }
     return new ModifiedProperty(properties[name], wearing, this);

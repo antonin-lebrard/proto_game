@@ -21,7 +21,7 @@ class GameLinkIo {
         return c;
       }
     }
-    print("$choseChoice choice not present in list of choices");
+    Logger.log(new RuntimeError(choseChoice, "$choseChoice choice not present in list of choices"));
     return null;
   }
 
