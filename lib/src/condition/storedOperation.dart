@@ -8,9 +8,14 @@ class StoredOperation implements HasValue {
 
   Function toExecute;
 
+  dynamic _cacheValue = null;
+
   StoredOperation.fromString(String s){
     DecodingHelper.decompose(s, _decodeOperationPart, _decodeNestedStoredOperation);
     OperationHelper.optimizeOperationAtParsing(wholeOperation);
+    if (OperationHelper.isTemporaryOnlyOperation(wholeOperation)){
+      _cacheValue = OperationHelper.applyOperation(wholeOperation);
+    }
   }
 
   /// Create copy of other
@@ -28,6 +33,7 @@ class StoredOperation implements HasValue {
   }
 
   dynamic applyOperation({HasProperties context: null}) {
+    if (_cacheValue != null) return _cacheValue;
     if (isFunction) return toExecute();
     else {
       if (context != null) {

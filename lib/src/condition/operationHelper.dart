@@ -203,4 +203,10 @@ class OperationHelper {
     }
   }
 
+  static bool isTemporaryOnlyOperation(List<dynamic> whole){
+    return whole
+        .where((dynamic el) => el is HasValue)
+        .every((HasValue el) => el is TempVariable);
+  }
+
 }
