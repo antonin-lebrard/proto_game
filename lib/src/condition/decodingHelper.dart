@@ -52,6 +52,18 @@ class ExpectedContextVariable extends HasValue {
 
 }
 
+/*class DebugStringDisplay {
+  String string;
+  int idx;
+  DebugStringDisplay(this.string, this.idx);
+  String toString(){
+    String toReturn = string + "\n";
+    for (int i = 0; i < idx; i++)
+        toReturn += " ";
+    return toReturn + "^";
+  }
+}*/
+
 abstract class DecodingHelper {
   static String _allOperatorsString = "+-/*%=><?:";
   static List<int> _allOperators = [$plus, $minus, $division, $asterisk, $percent, $equal, $greater_than, $less_than, $question, $colon];
@@ -81,6 +93,13 @@ abstract class DecodingHelper {
 
   static bool isFunction(String s){
     return _functionDelimiters.split('').every((String letter) => s.contains(letter));
+  }
+
+  static String reverseString(String s){
+    String r = "";
+    for (int i = s.length-1; i >= 0; i--)
+        r += s[i];
+    return r;
   }
 
   /// linearly check [String] and check diverse conditions to find pseudoCode parts
@@ -151,6 +170,62 @@ abstract class DecodingHelper {
     }
     onOperationPart(currentDecodingPart);
     DecodingHelper._stringMode = false;
+  }
+
+  static String fillTernaryConditionsWithParenthesis(String s){
+    if (!s.contains('?'))
+      return s;
+    String modifiedS = "(" + s + ")";
+    int forwardIdx = 1, backwardIdx = modifiedS.length - 2;
+    /*DebugStringDisplay forwardLetter = new DebugStringDisplay(modifiedS, forwardIdx);
+    DebugStringDisplay backwardLetter = new DebugStringDisplay(modifiedS, backwardIdx);*/
+    while (forwardIdx != backwardIdx){
+      if (modifiedS[forwardIdx] == '?'){
+        while(modifiedS[backwardIdx] != ':') {
+          backwardIdx--;
+          if (backwardIdx <= forwardIdx) {
+            Logger.log(new DecodingError(s, "Wrong ternary operation use (condition ? operation : operation)"));
+            return s;
+          }
+        }
+      }
+      if (modifiedS[backwardIdx] == ':'){
+        while(modifiedS[forwardIdx] != '?') {
+          forwardIdx++;
+          if (forwardIdx >= backwardIdx) {
+            Logger.log(new DecodingError(s, "Wrong ternary operation use (condition ? operation : operation)"));
+            return s;
+          }
+        }
+      }
+      /*forwardLetter = new DebugStringDisplay(modifiedS, forwardIdx);
+      backwardLetter = new DebugStringDisplay(modifiedS, backwardIdx);
+      print("before -----------");
+      print(forwardLetter);
+      print(backwardLetter);*/
+      if (modifiedS[forwardIdx] == '?' && modifiedS[backwardIdx] == ':') {
+        bool containsNestedTernaries = modifiedS.substring(forwardIdx+1, backwardIdx).contains("?");
+        int oldLength = modifiedS.length;
+        modifiedS = modifiedS.substring(0, forwardIdx)
+            + ")?("
+            + (containsNestedTernaries ? "(" : "")
+            + modifiedS.substring(forwardIdx + 1, backwardIdx)
+            + (containsNestedTernaries ? ")" : "")
+            + "):("
+            + modifiedS.substring(backwardIdx + 1);
+        if (!containsNestedTernaries)
+          return modifiedS;
+        backwardIdx += modifiedS.length - oldLength - 2;
+        forwardIdx++;
+        /*forwardLetter = new DebugStringDisplay(modifiedS, forwardIdx);
+        backwardLetter = new DebugStringDisplay(modifiedS, backwardIdx);
+        print("after ---------------");
+        print(forwardLetter);
+        print(backwardLetter);*/
+      }
+      forwardIdx++;
+    }
+    return modifiedS;
   }
 
   static Operation decodeOperation(String s){

@@ -361,6 +361,12 @@ void main() {
       new StoredOperation.fromString("globals.boolGl = globals.boolGl ? (globals.boolGl ? true : false) : false").applyOperation();
       expect(boolGl.getValue(), equals(true));
 
+      new StoredOperation.fromString("globals.boolGl = 9 == 9 ? (10 == 10 ? true : false) : (11 == 11 ? true : false)").applyOperation();
+      expect(boolGl.getValue(), equals(true));
+
+      String result = DecodingHelper.fillTernaryConditionsWithParenthesis("???:::");
+      expect(result, equals("()?(()?(()?():()):()):()"));
+
     });
 
     test("text", (){

@@ -44,7 +44,7 @@ class OperationHelper {
         HasValue keptVariable;
         bool twoVariableCondition = false;
         if (!_isValidConditionalOperation(variables, operations, i)) return false;
-        if (operations[i-1].isCondition){
+        if (i != 0 && operations[i-1].isCondition){
           keptVariable = _isConditionTrue(variables[i-1], operations[i-1], variables[i]) ? variables[i+1] : variables[i+2];
           twoVariableCondition = true;
         } else {
@@ -106,7 +106,7 @@ class OperationHelper {
     }
     if (!_processConditionalsOperations(variables, operations)) return new TempVariable(null);
     int nbAssigns = operations.where((Operation elem) => elem.isAssign).length;
-    HasValue result;
+    HasValue result = variables[0];
     while (operations.length > 0){
       result = _doOperation(variables[variables.length - 2], operations.last, variables.last);
       if (result == null){
